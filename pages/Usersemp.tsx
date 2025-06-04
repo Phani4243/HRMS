@@ -2,7 +2,9 @@ import { Box, Heading, Input, InputGroup, InputLeftElement, Table, Thead, Tbody,
 import { SearchIcon } from "@chakra-ui/icons";
 import { FaEye, FaEdit } from "react-icons/fa";
 import { useState } from "react";
-
+interface UsersempProps {
+  search : string;
+}
 type User = {
   id: number;
   name: string;
@@ -41,13 +43,12 @@ const statusColorMap = {
   Inactive: "red",
 };
 
-export default function UsersPage() {
-  const [search, setSearch] = useState("");
+export default function UsersPage( {searchQuery}: {searchQuery : string}) {
   const bg = useColorModeValue("white", "gray.700");
-
+  const [search , setSearch] = useState('');
   const filteredUsers = usersData.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase())
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -82,7 +83,8 @@ export default function UsersPage() {
             </Tr>
           </Thead>
           <Tbody>
-            {filteredUsers.map((user) => (
+            { filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
               <Tr key={user.id}>
                 <Td>
                   <HStack>
@@ -118,7 +120,15 @@ export default function UsersPage() {
                   </HStack>
                 </Td>
               </Tr>
-            ))}
+            ))
+          ): (
+             <Tr>
+                <Td colSpan={5}>
+                  <Box textAlign="center" py={4}>No matching users found.</Box>
+                </Td>
+              </Tr>
+          )
+          }
           </Tbody>
         </Table>
       </Box>

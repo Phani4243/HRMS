@@ -10,6 +10,9 @@ import {
   Heading,
   VStack,
   useToast,
+  Text,
+  Divider,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 
 interface Candidate {
@@ -32,30 +35,53 @@ const initialCandidate: Candidate = {
   notes: '',
 };
 
+const validateEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
 const Recruitemp: React.FC = () => {
   const [candidate, setCandidate] = useState(initialCandidate);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const toast = useToast();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setCandidate({ ...candidate, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!candidate.fullName.trim()) newErrors.fullName = 'Full name is required.';
+    if (!candidate.email.trim() || !validateEmail(candidate.email))
+      newErrors.email = 'Enter a valid email address.';
+    if (!candidate.position.trim()) newErrors.position = 'Please select a position.';
+    if (candidate.experience && Number(candidate.experience) < 0)
+      newErrors.experience = 'Experience cannot be negative.';
 
-    
-    if (!candidate.fullName || !candidate.email || !candidate.position) {
+    return newErrors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors = validate();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       toast({
-        title: 'Missing required fields',
-        description: 'Please fill out Full Name, Email, and Position.',
+        title: 'Validation Error',
+        description: 'Please correct the highlighted fields.',
         status: 'error',
-        duration: 4000,
+        duration: 3000,
         isClosable: true,
       });
       return;
     }
 
-    
+    setIsSubmitting(true);
+    await new Promise((res) => setTimeout(res, 1000));
+
     console.log('Submitted Candidate:', candidate);
 
     toast({
@@ -66,19 +92,25 @@ const Recruitemp: React.FC = () => {
       isClosable: true,
     });
 
-
     setCandidate(initialCandidate);
+    setIsSubmitting(false);
   };
 
   return (
-    <Box maxW="600px" mx="auto" p={6} boxShadow="md" borderRadius="md" bg="white">
-      <Heading mb={6} color="blue.600" textAlign="center">
+    <Box maxW="600px" mx="auto" p={6} boxShadow="lg" borderRadius="lg" bg="white">
+      <Heading mb={4} color="blue.600" textAlign="center">
         Recruitment Form
       </Heading>
 
+      <Text mb={6} color="gray.600" fontSize="sm" textAlign="center">
+        Please fill in your details to apply for a role at our company.
+      </Text>
+
       <form onSubmit={handleSubmit}>
         <VStack spacing={4} align="stretch">
-          <FormControl isRequired>
+          <Divider />
+
+          <FormControl isRequired isInvalid={!!errors.fullName}>
             <FormLabel>Full Name</FormLabel>
             <Input
               name="fullName"
@@ -86,9 +118,10 @@ const Recruitemp: React.FC = () => {
               onChange={handleChange}
               placeholder="Enter full name"
             />
+            <FormErrorMessage>{errors.fullName}</FormErrorMessage>
           </FormControl>
 
-          <FormControl isRequired>
+          <FormControl isRequired isInvalid={!!errors.email}>
             <FormLabel>Email</FormLabel>
             <Input
               type="email"
@@ -97,6 +130,7 @@ const Recruitemp: React.FC = () => {
               onChange={handleChange}
               placeholder="Enter email address"
             />
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
           </FormControl>
 
           <FormControl>
@@ -110,7 +144,9 @@ const Recruitemp: React.FC = () => {
             />
           </FormControl>
 
-          <FormControl isRequired>
+          <Divider />
+
+          <FormControl isRequired isInvalid={!!errors.position}>
             <FormLabel>Position Applied For</FormLabel>
             <Select
               name="position"
@@ -124,6 +160,7 @@ const Recruitemp: React.FC = () => {
               <option value="UI/UX Designer">UI/UX Designer</option>
               <option value="Project Manager">Project Manager</option>
             </Select>
+            <FormErrorMessage>{errors.position}</FormErrorMessage>
           </FormControl>
 
           <FormControl>
@@ -140,13 +177,13 @@ const Recruitemp: React.FC = () => {
           </FormControl>
 
           <FormControl>
-            <FormLabel>Resume Link (optional)</FormLabel>
+            <FormLabel>Resume Link</FormLabel>
             <Input
               type="url"
               name="resumeLink"
               value={candidate.resumeLink}
               onChange={handleChange}
-              placeholder="Paste resume URL"
+              placeholder="Paste resume URL (Google Drive, etc.)"
             />
           </FormControl>
 
@@ -161,7 +198,14 @@ const Recruitemp: React.FC = () => {
             />
           </FormControl>
 
-          <Button type="submit" colorScheme="blue" width="full" mt={4}>
+          <Button
+            type="submit"
+            colorScheme="blue"
+            width="full"
+            mt={4}
+            isLoading={isSubmitting}
+            loadingText="Submitting..."
+          >
             Submit Application
           </Button>
         </VStack>

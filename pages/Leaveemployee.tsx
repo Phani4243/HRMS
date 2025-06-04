@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Heading,
@@ -19,17 +19,25 @@ import {
   Td,
   useToast,
   Progress,
-  Link,
   InputGroup,
   InputRightElement,
   Input,
   FormErrorMessage,
   Collapse,
   useBreakpointValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  Checkbox,
+  CheckboxGroup,
+  Stack,
 } from "@chakra-ui/react";
 import { FiCalendar, FiCheckCircle, FiClock, FiSearch } from "react-icons/fi";
 import DatePicker from "react-datepicker";
-import NextLink from "next/link";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
@@ -44,6 +52,7 @@ interface LeaveRecord {
   to: Date;
   status: LeaveStatus;
   appliedOn: Date;
+  sendTo: string[]; 
 }
 
 interface FormData {
@@ -51,6 +60,7 @@ interface FormData {
   fromDate: Date | null;
   toDate: Date | null;
   reason: string;
+  sendTo: string[]; 
 }
 
 const schema = yup.object({
@@ -66,13 +76,10 @@ const schema = yup.object({
     .trim()
     .min(10, "Reason must be at least 10 characters")
     .required("Please enter reason"),
+  sendTo: yup.array().of(yup.string()).min(1,"please select atleast one recipient").required("please select at least one recipient"), 
 });
 
-const calculateLeaveDays = (from: Date | null, to: Date | null) => {
-  if (!from || !to) return 0;
-  const timeDiff = to.getTime() - from.getTime();
-  return Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
-};
+const PAGE_SIZE = 5;
 
 const Leaveemployee: React.FC = () => {
   const [leaveHistory, setLeaveHistory] = useState<LeaveRecord[]>([]);
@@ -80,65 +87,73 @@ const Leaveemployee: React.FC = () => {
   const [showHistory, setShowHistory] = useState(true);
   const toast = useToast();
 
+  const [sortBy, setSortBy] = useState<keyof LeaveRecord | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formDataToSubmit, setFormDataToSubmit] = useState<FormData | null>(null);
+
   const {
     handleSubmit,
     control,
     reset,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       leaveType: "",
       fromDate: null,
       toDate: null,
       reason: "",
+      sendTo: [],
     },
     resolver: yupResolver(schema) as any,
   });
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (!data.fromDate || !data.toDate) return;
+  const watchFromDate = watch("fromDate");
+  const watchToDate = watch("toDate");
 
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    setFormDataToSubmit(data);
+    setIsModalOpen(true);
+  };
+
+  const handleRealSubmit = async (data: FormData) => {
     try {
-      const response = await fetch("/api/leave", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          leaveType: data.leaveType,
-          fromDate: data.fromDate,
-          toDate: data.toDate,
-          reason: data.reason,
-        }),
-      });
+      
+      await new Promise((res) => setTimeout(res, 700));
 
-      if (!response.ok) throw new Error("Submission failed");
-
-      const result = await response.json();
-
+      
       const newLeave: LeaveRecord = {
         id: Date.now(),
         type: data.leaveType,
-        from: data.fromDate,
-        to: data.toDate,
+        from: data.fromDate!,
+        to: data.toDate!,
         status: "Pending",
         appliedOn: new Date(),
+        sendTo: data.sendTo || [],
       };
 
-      setLeaveHistory([newLeave, ...leaveHistory]);
+      setLeaveHistory((prev) => [newLeave, ...prev]);
       reset();
+      setCurrentPage(1);
+
+      console.log("Leave submitted:", newLeave);
 
       toast({
         title: "Leave request submitted!",
-        description: "Sent to HR and Team Lead.",
+        description: `Sent to: ${
+          newLeave.sendTo.length > 0 ? newLeave.sendTo.join(", ") : "No one"
+        }`,
         status: "success",
         duration: 4000,
         isClosable: true,
       });
-    } catch (error) {
+    } catch {
       toast({
-        title: "Error",
-        description: "Something went wrong. Try again later.",
+        title: "Submission failed",
+        description: "Please try again later.",
         status: "error",
         duration: 4000,
         isClosable: true,
@@ -146,11 +161,57 @@ const Leaveemployee: React.FC = () => {
     }
   };
 
-  const filteredHistory = leaveHistory
-    .filter((record) =>
-      record.type.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => b.appliedOn.getTime() - a.appliedOn.getTime());
+  const filteredHistory = useMemo(
+    () =>
+      leaveHistory.filter((record) =>
+        record.type.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [leaveHistory, searchTerm]
+  );
+
+  const sortedHistory = useMemo(() => {
+    if (!sortBy) return filteredHistory;
+
+    const sorted = [...filteredHistory].sort((a, b) => {
+      const aVal = a[sortBy];
+      const bVal = b[sortBy];
+
+      if (aVal instanceof Date && bVal instanceof Date) {
+        return sortOrder === "asc"
+          ? aVal.getTime() - bVal.getTime()
+          : bVal.getTime() - aVal.getTime();
+      }
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return sortOrder === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+      return 0;
+    });
+
+    return sorted;
+  }, [filteredHistory, sortBy, sortOrder]);
+
+  const totalPages = Math.ceil(sortedHistory.length / PAGE_SIZE);
+  const paginatedHistory = sortedHistory.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const toggleSort = (column: keyof LeaveRecord) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(column);
+      setSortOrder("asc");
+    }
+    setCurrentPage(1);
+  };
+
+  const renderSortIcon = (column: keyof LeaveRecord) => {
+    if (sortBy !== column) return null;
+    return sortOrder === "asc" ? " 🔼" : " 🔽";
+  };
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -160,17 +221,41 @@ const Leaveemployee: React.FC = () => {
         Employee Leave Dashboard
       </Heading>
 
-      {/* Leave Summary Cards */}
       <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={4} mb={8}>
-        <SummaryCard icon={FiCalendar} label="Annual Leave" value={12} max={20} colorScheme="green" />
-        <SummaryCard icon={FiClock} label="Sick Leave" value={8} max={10} colorScheme="yellow" />
-        <SummaryCard icon={FiCalendar} label="Casual Leave" value={5} max={10} colorScheme="blue" />
-        <SummaryCard icon={FiCheckCircle} label="Used This Year" value={10} max={40} colorScheme="purple" />
+        <SummaryCard
+          icon={FiCalendar}
+          label="Annual Leave"
+          value={12}
+          max={20}
+          colorScheme="green"
+        />
+        <SummaryCard
+          icon={FiClock}
+          label="Sick Leave"
+          value={8}
+          max={10}
+          colorScheme="yellow"
+        />
+        <SummaryCard
+          icon={FiCalendar}
+          label="Casual Leave"
+          value={5}
+          max={10}
+          colorScheme="blue"
+        />
+        <SummaryCard
+          icon={FiCheckCircle}
+          label="Used This Year"
+          value={10}
+          max={40}
+          colorScheme="purple"
+        />
       </SimpleGrid>
 
-      {/* Leave Form */}
       <Box bg="white" p={6} rounded="md" shadow="md" mb={8}>
-        <Heading size="md" mb={4} color="teal.700">Apply for Leave</Heading>
+        <Heading size="md" mb={4} color="teal.700">
+          Apply for Leave
+        </Heading>
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack spacing={4}>
             <FormControl isInvalid={!!errors.leaveType} isRequired>
@@ -196,14 +281,20 @@ const Leaveemployee: React.FC = () => {
                   control={control}
                   name="fromDate"
                   render={({ field }) => (
-                    <DatePicker
-                      placeholderText="Start date"
-                      selected={field.value}
-                      onChange={field.onChange}
-                      dateFormat="yyyy-MM-dd"
-                      customInput={<Input />}
-                      minDate={new Date()}
-                    />
+                    <InputGroup>
+                      <DatePicker
+                        placeholderText="Start date"
+                        selected={field.value}
+                        onChange={field.onChange}
+                        dateFormat="yyyy-MM-dd"
+                        minDate={new Date()}
+                        selectsStart
+                        startDate={watchFromDate}
+                        endDate={watchToDate}
+                        customInput={<Input />}
+                      />
+                    
+                    </InputGroup>
                   )}
                 />
                 <FormErrorMessage>{errors.fromDate?.message}</FormErrorMessage>
@@ -215,14 +306,19 @@ const Leaveemployee: React.FC = () => {
                   control={control}
                   name="toDate"
                   render={({ field }) => (
-                    <DatePicker
-                      placeholderText="End date"
-                      selected={field.value}
-                      onChange={field.onChange}
-                      dateFormat="yyyy-MM-dd"
-                      customInput={<Input />}
-                      minDate={control._formValues.fromDate || new Date()}
-                    />
+                    <InputGroup>
+                      <DatePicker
+                        placeholderText="End date"
+                        selected={field.value}
+                        onChange={field.onChange}
+                        dateFormat="yyyy-MM-dd"
+                        minDate={watchFromDate || new Date()}
+                        selectsEnd
+                        startDate={watchFromDate}
+                        endDate={watchToDate}
+                        customInput={<Input />}
+                      />
+                    </InputGroup>
                   )}
                 />
                 <FormErrorMessage>{errors.toDate?.message}</FormErrorMessage>
@@ -241,6 +337,28 @@ const Leaveemployee: React.FC = () => {
               <FormErrorMessage>{errors.reason?.message}</FormErrorMessage>
             </FormControl>
 
+            <FormControl pt={2} alignItems="flex-start">
+              <FormLabel>Send Request To (Optional)</FormLabel>
+              <Controller
+                control={control}
+                name="sendTo"
+                render={({ field }) => (
+                  <CheckboxGroup {...field}
+                    colorScheme="teal"
+                    value={field.value || []}
+                    onChange={field.onChange}
+                  >
+                    <Stack spacing={2} direction="row">
+                      <Checkbox value="HR">HR</Checkbox>
+                      <Checkbox value="Manager">Manager</Checkbox>
+                      <Checkbox value="Team Lead">Team Lead</Checkbox>
+                    </Stack>
+                  </CheckboxGroup>
+                )}
+              />
+              <FormErrorMessage>{errors.sendTo?.message}</FormErrorMessage>
+            </FormControl>
+
             <Button
               type="submit"
               colorScheme="teal"
@@ -254,10 +372,11 @@ const Leaveemployee: React.FC = () => {
         </form>
       </Box>
 
-      {/* Leave History */}
       <Box bg="white" p={6} rounded="md" shadow="md">
         <HStack justify="space-between" mb={4}>
-          <Heading size="md" color="teal.700">Leave History</Heading>
+          <Heading size="md" color="teal.700">
+            Leave History
+          </Heading>
           <Button size="sm" onClick={() => setShowHistory(!showHistory)}>
             {showHistory ? "Hide" : "Show"} History
           </Button>
@@ -271,49 +390,133 @@ const Leaveemployee: React.FC = () => {
             />
             <InputRightElement children={<FiSearch />} />
           </InputGroup>
+
           <Table variant="simple" size="sm">
             <Thead>
               <Tr>
-                <Th>Type</Th>
-                <Th>From</Th>
-                <Th>To</Th>
+                <Th cursor="pointer" onClick={() => toggleSort("type")}>
+                  Type{renderSortIcon("type")}
+                </Th>
+                <Th cursor="pointer" onClick={() => toggleSort("from")}>
+                  From{renderSortIcon("from")}
+                </Th>
+                <Th cursor="pointer" onClick={() => toggleSort("to")}>
+                  To{renderSortIcon("to")}
+                </Th>
                 <Th>Status</Th>
-                <Th>Applied On</Th>
+                <Th cursor="pointer" onClick={() => toggleSort("appliedOn")}>
+                  Applied On{renderSortIcon("appliedOn")}
+                </Th>
+                <Th>Send To</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {filteredHistory.length > 0 ? (
-                filteredHistory.map((record) => (
-                  <Tr key={record.id}>
-                    <Td>{record.type}</Td>
-                    <Td>{record.from.toLocaleDateString()}</Td>
-                    <Td>{record.to.toLocaleDateString()}</Td>
-                    <Td>
-                      <Badge colorScheme={
-                        record.status === "Approved" ? "green" :
-                        record.status === "Pending" ? "yellow" : "red"
-                      }>
-                        {record.status}
-                      </Badge>
-                    </Td>
-                    <Td>{record.appliedOn.toLocaleDateString()}</Td>
-                  </Tr>
-                ))
-              ) : (
+              {paginatedHistory.length === 0 && (
                 <Tr>
-                  <Td colSpan={5} textAlign="center">No records found</Td>
+                  <Td colSpan={6} textAlign="center" py={4}>
+                    No leave records found.
+                  </Td>
                 </Tr>
               )}
+              {paginatedHistory.map((leave) => (
+                <Tr key={leave.id}>
+                  <Td>{leave.type}</Td>
+                  <Td>{leave.from.toLocaleDateString()}</Td>
+                  <Td>{leave.to.toLocaleDateString()}</Td>
+                  <Td>
+                    <Badge
+                      colorScheme={
+                        leave.status === "Approved"
+                          ? "green"
+                          : leave.status === "Pending"
+                          ? "yellow"
+                          : "red"
+                      }
+                    >
+                      {leave.status}
+                    </Badge>
+                  </Td>
+                  <Td>{leave.appliedOn.toLocaleDateString()}</Td>
+                  <Td>{leave.sendTo && leave.sendTo.length > 0 ? leave.sendTo.join(", ") : "—"}</Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
-        </Collapse>
 
-        <Box textAlign="center" mt={8}>
-          <NextLink href="/PrivacyPolicy" passHref>
-            <Link color="teal.500">View Privacy Policy</Link>
-          </NextLink>
-        </Box>
+          <HStack justify="center" mt={4} spacing={4}>
+            <Button
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            >
+              Previous
+            </Button>
+            <Text>
+              Page {currentPage} of {totalPages || 1}
+            </Text>
+            <Button
+              size="sm"
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            >
+              Next
+            </Button>
+          </HStack>
+        </Collapse>
       </Box>
+
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Leave Submission</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Leave Type: <strong>{formDataToSubmit?.leaveType}</strong>
+            </Text>
+            <Text>
+              From: <strong>{formDataToSubmit?.fromDate?.toLocaleDateString()}</strong>
+            </Text>
+            <Text>
+              To: <strong>{formDataToSubmit?.toDate?.toLocaleDateString()}</strong>
+            </Text>
+            <Text>
+              Reason: <strong>{formDataToSubmit?.reason}</strong>
+            </Text>
+            <Text mt={3}>
+              {formDataToSubmit?.sendTo.length
+                ? `This request will be sent to: ${formDataToSubmit?.sendTo.join(", ")}`
+                : "This request will not be sent to anyone."}
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="teal"
+              mr={3}
+              onClick={() => {
+                if (formDataToSubmit) {
+                  handleRealSubmit(formDataToSubmit);
+                  setIsModalOpen(false);
+                  setFormDataToSubmit(null);
+                }
+              }}
+            >
+              Confirm
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setIsModalOpen(false);
+                setFormDataToSubmit(null);
+              }}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
@@ -332,17 +535,34 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   value,
   max,
   colorScheme,
-}) => (
-  <Box bg="white" rounded="lg" shadow="sm" p={4} textAlign="center">
-    <Box mb={2} color={`${colorScheme}.500`} fontSize="2xl">
-      <Icon />
+}) => {
+  const percent = Math.min((value / max) * 100, 100);
+
+  return (
+    <Box
+      bg="white"
+      p={4}
+      rounded="md"
+      shadow="md"
+      textAlign="center"
+      color={`${colorScheme}.700`}
+    >
+      <Icon size={30} />
+      <Text fontWeight="bold" fontSize="lg" mt={2}>
+        {label}
+      </Text>
+      <Progress
+        value={percent}
+        size="sm"
+        colorScheme={colorScheme}
+        borderRadius="md"
+        mt={2}
+      />
+      <Text mt={1} fontSize="sm" color={`${colorScheme}.600`}>
+        {value} / {max}
+      </Text>
     </Box>
-    <Text fontWeight="bold">{label}</Text>
-    <Progress value={(value / max) * 100} size="sm" colorScheme={colorScheme} mt={2} />
-    <Text fontSize="sm" mt={1} color="gray.600">
-      {value} / {max} days
-    </Text>
-  </Box>
-);
+  );
+};
 
 export default Leaveemployee;

@@ -36,6 +36,7 @@ const settingsItem = { key: 'settings', icon: FiSettings, label: 'Settings' };
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [searchQuery, setSearchQuery] = useState('');
   const topbarBg = useColorModeValue('white', 'gray.900');
   const sidebarBg = useColorModeValue('white', 'gray.800');
   const bg = useColorModeValue('gray.50', 'gray.800');
@@ -63,11 +64,12 @@ const [notifications, setNotifications] = useState([
   { id: 3, message: 'Team meeting at 3 PM.', time: 'Today', read: true },
 ]);
 const renderContent = () => {
+  const props = {searchQuery};
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboardemp/>;
+        return <Dashboardemp searchQuery={searchQuery}/>;
       case 'users':
-        return <Usersemp/>;
+        return <Usersemp searchQuery={searchQuery}/>;
       case 'payslip':
           return <Payslipemp/>;
       case 'leave':
@@ -166,6 +168,8 @@ const renderContent = () => {
                 bg={useColorModeValue('gray.100', 'gray.700')}
                 borderRadius="md"
                 pl={8}
+                value = {searchQuery}
+                onChange = {(e) => setSearchQuery(e.target.value)}
               />
               <Box
                 position="absolute"
