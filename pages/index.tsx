@@ -122,12 +122,7 @@ const features = [
   const handleLoginClick = () => {
     router.push('/login');
   }
- const handlesignupfordemo = () => {
-   router.push({
-   pathname:'/Home',
-   query:{username: email.split('@')[0]}
- }
-)}
+ 
   const handleToggle = (index: number) => {
     if (activeNavDropdown === index) {
       setActiveNavDropdown(null);
@@ -331,7 +326,6 @@ return(
                } else {
                 setEmailError("");
                console.log("Email submitted for demo:", email);
-                 handlesignupfordemo();
                }
                } }
               >
