@@ -1,55 +1,68 @@
 import React from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Card, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  Link,
+  Text,
+  HStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { aboutSubmenuList } from "./constants/aboutInfo";
 
 const About = ({ children }) => {
   const router = useRouter();
+
+  const activeBg = useColorModeValue("blue.100", "blue.700");
+  const activeColor = useColorModeValue("blue.600", "white");
+
   return (
     <>
-      <Box
-        as="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
-        }}
-      >
-        <Card w="full">
-          <Box
-            as="div"
-            sx={{
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "center",
-              gap: "2rem",
-              h: "full",
-            }}
-          >
-            {aboutSubmenuList.map((data: any, index: any) => (
-              <Link as={NextLink} href={data.path} key={index}>
-                <Text
-                  fontWeight="semibold"
-                  color="#0096FF"
-                  padding="0.5rem"
-                  bg={router.pathname === data.path ? "#B6D0E2" : ""}
-                  _hover={{
-                    cursor: "pointer",
-                    bg: "#B6D0E2",
-                  }}
-                  sx={{
-                    transition: "2s ease-out 100ms",
-                  }}
+      <Box>
+        <Card
+          p={4}
+          borderRadius="md"
+          bg={useColorModeValue("gray.50", "gray.800")}
+          boxShadow="sm"
+        >
+          <HStack justifyContent={"space-around"} overflowX="auto" py={2}>
+            {aboutSubmenuList.map((data, index) => {
+              const isActive = router.pathname === data.path;
+
+              return (
+                <Link
+                  key={index}
+                  as={NextLink}
+                  href={data.path}
+                  _hover={{ textDecoration: "none" }}
                 >
-                  {data.menuTittle}
-                </Text>
-              </Link>
-            ))}
-          </Box>
+                  <Text
+                    px={4}
+                    py={2}
+                    borderRadius="md"
+                    fontWeight="medium"
+                    bg={isActive ? activeBg : "transparent"}
+                    color={isActive ? activeColor : useColorModeValue("gray.600", "gray.300")}
+                    _hover={{
+                      bg: useColorModeValue("gray.200", "gray.700"),
+                      color: activeColor,
+                    }}
+                    transition="all 0.2s"
+                    whiteSpace="nowrap"
+                  >
+                    {data.menuTittle}
+                  </Text>
+                </Link>
+              );
+            })}
+          </HStack>
         </Card>
       </Box>
-      {children}
+
+      <Box  mt={6}>
+        {children}
+      </Box>
     </>
   );
 };

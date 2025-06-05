@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 import {
   IconButton,
   Avatar,
@@ -8,41 +8,32 @@ import {
   HStack,
   VStack,
   Icon,
-  useColorModeValue,
   Text,
   Drawer,
   DrawerContent,
   useDisclosure,
-  BoxProps,
-  FlexProps,
   Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
   MenuList,
   Link,
-} from "@chakra-ui/react";
-
+} from '@chakra-ui/react';
 import {
   FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-  FiBell,
-  FiChevronDown,
   FiCalendar,
   FiTrello,
   FiUser,
   FiHelpCircle,
-} from "react-icons/fi";
-import NextLink from "next/link";
-
-import { IconType } from "react-icons";
-import { DarkModeSwitch } from "./DarkModeSwitch";
-import { useRouter } from "next/router";
-
+  FiSettings,
+  FiMenu,
+  FiBell,
+  FiChevronDown,
+} from 'react-icons/fi';
+import NextLink from 'next/link';
+import { IconType } from 'react-icons';
+import { DarkModeSwitch } from './DarkModeSwitch';
+import { useRouter } from 'next/router';
 
 interface LinkItemProps {
   name: string;
@@ -50,48 +41,51 @@ interface LinkItemProps {
   path: string;
 }
 
-interface NavItemProps extends FlexProps {
+interface NavItemProps {
   icon: IconType;
   children: React.ReactNode;
   path: string;
 }
 
-interface MobileProps extends FlexProps {
+interface MobileProps {
   onOpen: () => void;
 }
 
-interface SidebarProps extends BoxProps {
+interface SidebarProps {
   onClose: () => void;
-  dispaly : {base: string; md: string};
-  children: React.ReactNode;
+  display: { base: string; md: string };
+  children?: React.ReactNode;
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Home", icon: FiHome, path: "/" },
-  { name: "Attendance", icon: FiCalendar, path: "/attendance" },
-  { name: "Timesheets", icon: FiTrello, path: "/timesheet" },
-  { name: "Leaves", icon: FiUser, path: "/leaves" },
-  { name: "Support", icon: FiHelpCircle, path: "/support" },
-  { name: "Settings", icon: FiSettings, path: "/about" },
+  { name: 'Home', icon: FiHome, path: '/about' },
+  { name: 'Attendance', icon: FiCalendar, path: '/attendance' },
+  { name: 'Timesheets', icon: FiTrello, path: '/timesheet' },
+  { name: 'Leaves', icon: FiUser, path: '/leaves' },
+  { name: 'Support', icon: FiHelpCircle, path: '/support' },
+  { name: 'Settings', icon: FiSettings, path: '/settings' },
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
-      transition="3s ease"
-      bg={useColorModeValue("white", "gray.900")}
+      transition="0.3s ease"
+      bg="teal.800"
+      color="white"
       borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
+      borderRightColor="teal.600"
+      w={{ base: 'full', md: 60 }}
       pos="fixed"
-      h="full"
+      top="0"
+      left="0"
+      h="100vh"
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
+        <Text fontSize="2xl" fontWeight="bold" fontFamily="heading">
+          AVLR
         </Text>
-        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
         <NavItem key={link.name} icon={link.icon} path={link.path}>
@@ -102,144 +96,112 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   );
 };
 
-const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, path, children }: NavItemProps) => {
   return (
     <Link
       as={NextLink}
       href={path}
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
+      style={{ textDecoration: 'none' }}
+      _focus={{ boxShadow: 'none' }}
     >
       <Flex
         align="center"
         p="4"
         mx="4"
-        borderRadius="lg"
+        borderRadius="md"
         role="group"
         cursor="pointer"
+        transition="background 0.2s"
         _hover={{
-          bg: "cyan.400",
-          color: "white",
+          bg: 'teal.600',
+          color: 'white',
         }}
-        {...rest}
       >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
-        {children}
+        {icon && <Icon mr="4" fontSize="18" as={icon} />}
+        <Text fontWeight="medium">{children}</Text>
       </Flex>
     </Link>
   );
 };
 
-const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+const MobileNav = ({ onOpen }: MobileProps) => {
   const router = useRouter();
+
   return (
     <Flex
-      ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
-      bg={useColorModeValue("white", "gray.900")}
+      bg="teal.800"
+      color="white"
       borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
-      justifyContent={{ base: "space-between", md: "flex-end" }}
-      {...rest}
+      borderBottomColor="teal.600"
+      justifyContent={{ base: 'space-between', md: 'flex-end' }}
     >
       <IconButton
-        display={{ base: "flex", md: "none" }}
+        display={{ base: 'flex', md: 'none' }}
         onClick={onOpen}
-        variant="outline"
-        aria-label="open menu"
+        variant="ghost"
+        aria-label="Open menu"
         icon={<FiMenu />}
+        color="white"
       />
 
-      <Text
-        display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
+      <Text fontSize="2xl" fontWeight="bold" display={{ base: 'flex', md: 'none' }}>
+        AVLR
       </Text>
 
-      <HStack spacing={{ base: "0", md: "6" }}>
+      <HStack spacing={{ base: 1, md: 4 }}>
         <DarkModeSwitch />
         <IconButton
           size="lg"
           variant="ghost"
-          aria-label="open menu"
+          aria-label="Notifications"
           icon={<FiBell />}
+          color="white"
         />
-        <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: "none" }}
-            >
-              <HStack>
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1572344614259-e584d64cd266?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  }
-                />
-                <VStack
-                  display={{ base: "none", md: "flex" }}
-                  alignItems="flex-start"
-                  spacing="1px"
-                  ml="2"
-                >
-                  <Text fontSize="sm">Ankit Yadav</Text>
-                  <Text fontSize="xs" color="gray.600">
-                    CTO
-                  </Text>
-                </VStack>
-                <Box display={{ base: "none", md: "flex" }}>
-                  <FiChevronDown />
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList
-              bg={useColorModeValue("white", "gray.900")}
-              borderColor={useColorModeValue("gray.200", "gray.700")}
-            >
-              <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
-              <MenuDivider />
-              <MenuItem
-                onClick={() => {
-                  router.push("/login");
-                }}
+        <Menu>
+          <MenuButton py={2}>
+            <HStack>
+              <Avatar size="sm" name="Ankit Yadav" />
+              <VStack
+                spacing="1px"
+                alignItems="flex-start"
+                display={{ base: 'none', md: 'flex' }}
               >
-                Sign out
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
+                <Text fontSize="sm" fontWeight="bold">
+                  Ankit Yadav
+                </Text>
+                <Text fontSize="xs" color="teal.100">
+                  CTO
+                </Text>
+              </VStack>
+              <Box display={{ base: 'none', md: 'flex' }}>
+                <FiChevronDown />
+              </Box>
+            </HStack>
+          </MenuButton>
+          <MenuList bg="white" color="black">
+            <MenuItem>Profile</MenuItem>
+            <MenuItem>Settings</MenuItem>
+            <MenuDivider />
+            <MenuItem onClick={() => router.push('/login')}>Sign out</MenuItem>
+          </MenuList>
+        </Menu>
       </HStack>
     </Flex>
   );
 };
 
-const SidebarWithHeader = ({ children }) => {
+const SidebarWithHeader = ({ children }: { children: ReactNode }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
-      <SidebarContent
-        onClose={() => onClose}
-        display={{ base: "none", md: "block" }}
-      />
+    <Box minH="100vh" bg="gray.100">
+      {/* Sidebar */}
+      <SidebarContent onClose={onClose} display={{ base: 'none', md: 'block' }} />
+
+      {/* Drawer Sidebar (Mobile) */}
       <Drawer
         isOpen={isOpen}
         placement="left"
@@ -252,10 +214,26 @@ const SidebarWithHeader = ({ children }) => {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
-        {/* Content */}
+
+      {/* Fixed Header */}
+      <Box
+        position="fixed"
+        top="0"
+        left={{ base: 0, md: 60 }}
+        right="0"
+        zIndex="1000"
+        height="80px"
+        bg="teal.500"
+      >
+        <MobileNav onOpen={onOpen} />
+      </Box>
+
+      {/* Main content */}
+      <Box
+        ml={{ base: 0, md: 60 }}
+        mt="80px" // Apply margin ONLY to content
+        p="4"
+      >
         {children}
       </Box>
     </Box>

@@ -14,13 +14,14 @@ import { repotingTeamInfo } from "./constants/repotingTeamInfo";
 const ReaportingTeam = () => {
   return (
     <>
-      <Card padding="1rem">
+      <Card padding="1rem" width="429px" height="312px">
         <Box
           as="div"
           sx={{
             display: "flex",
             flexDirection: "column",
             gap: "2rem",
+            
           }}
         >
           <Box>

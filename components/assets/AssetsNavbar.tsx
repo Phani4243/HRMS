@@ -21,10 +21,12 @@ const AssetsNavbar = ({ children }) => {
             as="div"
             sx={{
               display: "flex",
-              justifyContent: "start",
               alignItems: "center",
               gap: "2rem",
               h: "full",
+              justifyContent: "space-around",
+              overflowX: "auto", py: "5",
+              borderRadius: "md"
             }}
           >
             {assetMenuList.map((menuInfo: any, index: any) => (
@@ -33,6 +35,7 @@ const AssetsNavbar = ({ children }) => {
                   fontWeight="semibold"
                   color="#0096FF"
                   padding="0.5rem"
+                  borderRadius="5px"
                   bg={router.pathname === menuInfo.menuPath ? "#B6D0E2" : ""}
                   _hover={{
                     cursor: "pointer",

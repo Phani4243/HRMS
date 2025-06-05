@@ -27,7 +27,7 @@ const TimeLine = () => {
   });
   return (
     <>
-      <Card w="40%" padding="2rem">
+      <Card w="100%" padding="2rem">
         <Box
           as="div"
           sx={{
@@ -36,13 +36,14 @@ const TimeLine = () => {
             gap: "2rem",
           }}
         >
-          <Text>Timeline</Text>
+
           <Stepper
             index={activeStep}
-            orientation="vertical"
-            height="400px"
+            orientation="horizontal"
+            height="120px"
             gap="0"
-            colorScheme='red' 
+
+            colorScheme='red'
           >
             {steps.map((step, index) => (
               <Step key={index}>

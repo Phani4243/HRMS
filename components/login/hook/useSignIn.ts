@@ -7,33 +7,33 @@ interface Props {
 }
 
 export const useSignIn = () => {
-  const { Success, Warn} = useToastMessages();
+  const { Success, Warn } = useToastMessages();
   const router = useRouter();
 
 
   const handleSubmit = async (values: Props, router: any) => {
     const { email, password } = values;
     const username = email.split("@")[0];
-  
+
 
     try {
 
-    
+
 
       if (email === "employee@gmail.com" && password === "Employee@1234") {
         await Success("login successful", "Redirecting...");
         router.push({
           pathname: "/Home",
-          query: {username},
+          query: { username },
         });
       } else if (email === "hr@gmail.com" && password === "HRempz@1234") {
-         await Success("login successful", "Redirecting...");
+        await Success("login successful", "Redirecting...");
         router.push({
-          pathname : "/about",
-          query : {username},
+          pathname: "/about",
+          query: { username },
         });
       } else {
-       await Warn("Invalid credentials");
+        await Warn("Invalid credentials");
         return;
       }
     } catch (err: any) {

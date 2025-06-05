@@ -10,17 +10,17 @@ const JobPage = () => {
   return (
     <>
       <InnerLayout>
-        <Grid templateColumns="70% 20%" gap={6}>
+        <Grid templateColumns="50% 50%" gap={6}>
           <GridItem colSpan={1} >
             <JobDetail />
             <Box h="1rem"></Box>
             <EmployeTimeing />
-            <Box h="1rem"></Box>
-            <OtherDetailsInfo />
           </GridItem>
 
           <GridItem colSpan={1}>
             <OrganizationView />
+            <Box h="1rem"></Box>
+            <OtherDetailsInfo />
           </GridItem>
         </Grid>
       </InnerLayout>

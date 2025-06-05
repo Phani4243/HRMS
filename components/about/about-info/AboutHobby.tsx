@@ -29,7 +29,7 @@ const AboutHobby = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "full",
+          width: "429px",
         }}
       >
         <Box

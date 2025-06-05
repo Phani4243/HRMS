@@ -92,7 +92,7 @@ const UserForm = () => {
           gap: "3rem",
         }}
       >
-        <Card w="40%" padding="0.9rem">
+        <Card w="50%" padding="0.9rem">
           <Box
             as="div"
             sx={{
@@ -130,7 +130,7 @@ const UserForm = () => {
             <ProfileViewCard dataInfo={profilePrimaryInfo} />
           </Box>
         </Card>
-        <Card w="40%" padding="0.9rem">
+        <Card w="50%" padding="0.9rem">
           <Box
             as="div"
             sx={{

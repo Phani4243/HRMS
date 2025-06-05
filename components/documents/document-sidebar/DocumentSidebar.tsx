@@ -28,7 +28,7 @@ const DocumentSidebar: React.FC<LayoutProps> = ({ children }) => {
             Employee Documents
           </Heading>
         </Box>
-        <Grid templateColumns="20% 78%" gap={6}>
+        <Grid templateColumns="50% 50%" gap={6}>
           <GridItem>
             <Box
               as="div"
@@ -43,7 +43,7 @@ const DocumentSidebar: React.FC<LayoutProps> = ({ children }) => {
                 </Box>
                 <Scrollbar
                   style={{
-                    height: "40vh",
+                    height: "25vh",
                     padding: "2rem",
                   }}
                 >
