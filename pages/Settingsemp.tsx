@@ -96,15 +96,15 @@ export default function Settingsemp({
   };
 
   return (
-    <Box maxW="3xl" mx="auto" p={6}>
-      <Heading size="lg" mb={6} textAlign="center">
+    <Box maxW="1000px" mx="auto" p={6}>
+      <Heading size="lg" color="teal.600" mb={6} textAlign="center">
         Account Settings
       </Heading>
 
       <VStack spacing={8} align="stretch">
-        
-        <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading fontSize="xl" mb={4}>
+
+        <Box bg="gray.50"  p={6} rounded="md" boxShadow="md">
+          <Heading color="teal.600" fontSize="xl" mb={4}>
             Profile Information
           </Heading>
           <Stack spacing={4}>
@@ -137,7 +137,7 @@ export default function Settingsemp({
 
 
         <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading fontSize="xl" mb={4}>
+          <Heading color="teal.600" fontSize="xl" mb={4}>
             Change Password
           </Heading>
           <Stack spacing={4}>
@@ -181,7 +181,7 @@ export default function Settingsemp({
         </Box>
 
         <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading fontSize="xl" mb={4}>
+          <Heading color="teal.600" fontSize="xl" mb={4}>
             Notifications
           </Heading>
           <Stack spacing={4}>
@@ -213,7 +213,7 @@ export default function Settingsemp({
           </Stack>
         </Box>
 
-    
+
         <Button colorScheme="green" size="lg" alignSelf="flex-end" onClick={handleSave}>
           Save All Settings
         </Button>

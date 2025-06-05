@@ -11,10 +11,10 @@ import {
 } from "@chakra-ui/react";
 
 const leaveColors = {
-  Sick: "#E53E3E", 
-  Casual: "#38A169", 
-  "Work From Home": "#3182CE", 
-  Holiday: "#805AD5", 
+  Sick: "#E53E3E",
+  Casual: "#38A169",
+  "Work From Home": "#3182CE",
+  Holiday: "#805AD5",
 };
 
 const monthNames = [
@@ -49,10 +49,10 @@ export default function EmployeeCalendar() {
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
   const [year] = useState(2025);
-  const [month] = useState(4); 
+  const [month] = useState(4);
 
   const totalDays = daysInMonth(year, month);
-  const firstDayOfWeek = new Date(year, month, 1).getDay(); 
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
 
 
   const isLeaveDay = (date: string) =>
@@ -63,7 +63,7 @@ export default function EmployeeCalendar() {
 
   return (
     <Box
-      maxW="900px"
+      maxW="1000px"
       mx="auto"
       bg={bg}
       p={6}
@@ -72,14 +72,14 @@ export default function EmployeeCalendar() {
       fontFamily="'Inter', sans-serif"
       color={textColor}
     >
-      <Text fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
+      <Text size="lg" color="teal.600" fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
         {monthNames[month]} {year} — Employee Leave Calendar
       </Text>
 
       <HStack spacing={8} align="flex-start">
-        
+
         <Box flex="1">
-        
+
           <SimpleGrid columns={7} spacing={1} textAlign="center" mb={3}>
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
               <Box key={d} fontWeight="semibold" color="gray.500">
@@ -88,16 +88,16 @@ export default function EmployeeCalendar() {
             ))}
           </SimpleGrid>
 
-      
+
           <SimpleGrid columns={7} spacing={2}>
-        
+
             {Array(firstDayOfWeek)
               .fill(0)
               .map((_, i) => (
                 <Box key={"empty-" + i} />
               ))}
 
-        
+
             {Array(totalDays)
               .fill(0)
               .map((_, idx) => {
@@ -119,18 +119,18 @@ export default function EmployeeCalendar() {
                       bg: leave
                         ? leaveColors[leave.type as keyof typeof leaveColors] + "33"
                         : holiday
-                        ? leaveColors.Holiday + "33"
-                        : undefined,
+                          ? leaveColors.Holiday + "33"
+                          : undefined,
                     }}
                     px={2}
                     pt={2}
                   >
-      
+
                     <Text fontSize="sm" fontWeight="bold" mb={1}>
                       {day}
                     </Text>
 
-                
+
                     <HStack spacing={1} position="absolute" bottom={2} left={2}>
                       {leave && (
                         <Box
@@ -157,7 +157,7 @@ export default function EmployeeCalendar() {
           </SimpleGrid>
         </Box>
 
-    
+
         <Box
           w="280px"
           p={4}
@@ -171,7 +171,7 @@ export default function EmployeeCalendar() {
 
           <VStack align="start" spacing={3}>
             {Object.entries(leaveColors).map(([type, color]) => {
-            
+
               const count =
                 type === "Holiday"
                   ? holidays.length

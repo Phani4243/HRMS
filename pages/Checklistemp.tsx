@@ -37,7 +37,6 @@ const Checklistemp: React.FC = () => {
   const bg = useColorModeValue('white', 'gray.700');
   const cardBg = useColorModeValue('gray.50', 'gray.600');
 
-  
   const toggleComplete = (id: number) => {
     setItems(prev =>
       prev.map(item =>
@@ -46,23 +45,20 @@ const Checklistemp: React.FC = () => {
     );
   };
 
-  
   const startEditing = (id: number) => {
     setItems(prev =>
       prev.map(item => (item.id === id ? { ...item, editing: true } : item))
     );
   };
 
-  
   const cancelEditing = (id: number) => {
     setItems(prev =>
       prev.map(item => (item.id === id ? { ...item, editing: false } : item))
     );
   };
 
-
   const saveLabel = (id: number, newLabel: string) => {
-    if (newLabel.trim() === '') return; 
+    if (newLabel.trim() === '') return;
     setItems(prev =>
       prev.map(item =>
         item.id === id ? { ...item, label: newLabel, editing: false } : item
@@ -84,7 +80,6 @@ const Checklistemp: React.FC = () => {
     setNewTask('');
   };
 
-
   const completedCount = useMemo(
     () => items.filter(item => item.completed).length,
     [items]
@@ -95,14 +90,13 @@ const Checklistemp: React.FC = () => {
     setItems(prev => prev.map(item => ({ ...item, completed: true })));
   };
 
-
   const resetAll = () => {
     setItems(prev => prev.map(item => ({ ...item, completed: false })));
   };
 
   return (
-    <Box maxW="700px" mx="auto" p={6} bg={bg} borderRadius="md" boxShadow="md">
-      <Heading mb={6} color="blue.600" textAlign="center">
+    <Box maxW="1000px" mx="auto" p={6} bg={bg} borderRadius="md" boxShadow="md">
+      <Heading mb={6} size="lg" color="teal.600" textAlign="center">
         Employee Checklist
       </Heading>
 
@@ -112,7 +106,6 @@ const Checklistemp: React.FC = () => {
         {completedCount} of {items.length} completed
       </Text>
 
-    
       <HStack mb={6}>
         <Input
           placeholder="Add new task..."
@@ -123,7 +116,7 @@ const Checklistemp: React.FC = () => {
           }}
         />
         <Button
-          colorScheme="blue"
+          colorScheme="cyan" // Add Task button color scheme changed to cyan
           onClick={addTask}
           disabled={!newTask.trim()}
           leftIcon={<AddIcon />}
@@ -132,7 +125,7 @@ const Checklistemp: React.FC = () => {
         </Button>
       </HStack>
 
-      <SimpleGrid columns={{ base:1, md:2 }} spacing={4}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         {items.map(({ id, label, completed, editing }) => (
           <Box
             key={id}
@@ -178,10 +171,15 @@ const Checklistemp: React.FC = () => {
               {completed ? 'Completed' : 'Pending'}
             </Badge>
 
-            <Box display={"flex"} flexWrap={"wrap"} justifyContent={"space-between"} gap={2}>
+            <Box
+              display={'flex'}
+              flexWrap={'wrap'}
+              justifyContent={'space-between'}
+              gap={2}
+            >
               <Button
                 size="sm"
-                colorScheme={completed ? 'red' : 'green'}
+                colorScheme={completed ? 'red' : 'blue'} // changed green to blue here
                 onClick={() => toggleComplete(id)}
               >
                 {completed ? 'Mark Incomplete' : 'Mark Complete'}
@@ -212,7 +210,7 @@ const Checklistemp: React.FC = () => {
       </SimpleGrid>
 
       <VStack mt={6} spacing={4}>
-        <Button colorScheme="green" onClick={markAllComplete} width="full">
+        <Button colorScheme="blue" onClick={markAllComplete} width="full">
           Mark All Completed
         </Button>
         <Button variant="outline" colorScheme="red" onClick={resetAll} width="full">

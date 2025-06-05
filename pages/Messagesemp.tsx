@@ -75,7 +75,7 @@ export default function EmployeeMessagesPanel() {
       id: messages.length + 1,
       sender: currentEmployee,
       recipient: recipient.trim(),
-      avatar: '', 
+      avatar: '',
       content: messageContent.trim(),
       timestamp: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       status: 'read',
@@ -109,9 +109,9 @@ export default function EmployeeMessagesPanel() {
   ).length;
 
   return (
-    <Box p={6} maxW="5xl" mx="auto">
+    <Box p={6} maxW="1000px" mx="auto">
       <HStack justify="space-between" mb={6}>
-        <Heading>My Messages</Heading>
+        <Heading size="lg" color="teal.600">My Messages</Heading>
         {unreadCount > 0 && (
           <Badge colorScheme="red" fontSize="md">
             {unreadCount} Unread
@@ -172,7 +172,7 @@ export default function EmployeeMessagesPanel() {
 
       <Divider my={6} />
 
-      
+
       <HStack mt={4} spacing={3} flexWrap="wrap">
         <Select
           placeholder="Send to..."

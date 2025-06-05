@@ -1,9 +1,11 @@
-import { Box, Heading, Input, InputGroup, InputLeftElement, Table, Thead, Tbody, Tr, Th, Td, Avatar, Badge, Button, HStack, VStack, IconButton, useColorModeValue,} from "@chakra-ui/react";
+import { Box, Heading, Input, InputGroup, InputLeftElement, Table, Thead, Tbody, Tr, Th, Td, Avatar, Badge, Button, HStack, VStack, IconButton, useColorModeValue, } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { FaEye, FaEdit } from "react-icons/fa";
 import { useState } from "react";
 interface UsersempProps {
-  search : string;
+
+  search: string;
+
 }
 type User = {
   id: number;
@@ -43,17 +45,19 @@ const statusColorMap = {
   Inactive: "red",
 };
 
-export default function UsersPage( {searchQuery}: {searchQuery : string}) {
+
+export default function UsersPage({ searchQuery }: { searchQuery: string }) {
   const bg = useColorModeValue("white", "gray.700");
-  const [search , setSearch] = useState('');
+  const [search, setSearch] = useState('');
+
   const filteredUsers = usersData.filter((user) =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <VStack align="start" spacing={6}>
-      <Heading fontSize="2xl">Users</Heading>
+    <VStack align="start" spacing={6} maxW="1000px" mx="auto" p={6}>
+      <Heading size="lg" color="teal.600">Users</Heading>
 
       <InputGroup maxW="400px">
         <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
@@ -83,52 +87,54 @@ export default function UsersPage( {searchQuery}: {searchQuery : string}) {
             </Tr>
           </Thead>
           <Tbody>
-            { filteredUsers.length > 0 ? (
+
+            {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-              <Tr key={user.id}>
-                <Td>
-                  <HStack>
-                    <Avatar name={user.name} size="sm" />
-                    <Box>
-                      <Box fontWeight="medium">{user.name}</Box>
-                    </Box>
-                  </HStack>
-                </Td>
-                <Td>{user.email}</Td>
-                <Td>{user.role}</Td>
-                <Td>
-                  <Badge colorScheme={statusColorMap[user.status]}>
-                    {user.status}
-                  </Badge>
-                </Td>
-                <Td textAlign="right">
-                  <HStack spacing={2} justify="end">
-                    <IconButton
-                      size="sm"
-                      icon={<FaEye />}
-                      aria-label="View User"
-                      variant="ghost"
-                      colorScheme="blue"
-                    />
-                    <IconButton
-                      size="sm"
-                      icon={<FaEdit />}
-                      aria-label="Edit User"
-                      variant="ghost"
-                      colorScheme="green"
-                    />
-                  </HStack>
-                </Td>
-              </Tr>
-            ))
-          ): (
-             <Tr>
+                <Tr key={user.id}>
+                  <Td>
+                    <HStack>
+                      <Avatar name={user.name} size="sm" />
+                      <Box>
+                        <Box fontWeight="medium">{user.name}</Box>
+                      </Box>
+                    </HStack>
+                  </Td>
+                  <Td>{user.email}</Td>
+                  <Td>{user.role}</Td>
+                  <Td>
+                    <Badge colorScheme={statusColorMap[user.status]}>
+                      {user.status}
+                    </Badge>
+                  </Td>
+                  <Td textAlign="right">
+                    <HStack spacing={2} justify="end">
+                      <IconButton
+                        size="sm"
+                        icon={<FaEye />}
+                        aria-label="View User"
+                        variant="ghost"
+                        colorScheme="blue"
+                      />
+                      <IconButton
+                        size="sm"
+                        icon={<FaEdit />}
+                        aria-label="Edit User"
+                        variant="ghost"
+                        colorScheme="green"
+                      />
+                    </HStack>
+                  </Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
                 <Td colSpan={5}>
                   <Box textAlign="center" py={4}>No matching users found.</Box>
                 </Td>
               </Tr>
-          )
-          }
+            )
+            }
+
           </Tbody>
         </Table>
       </Box>

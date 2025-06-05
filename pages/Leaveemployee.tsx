@@ -52,7 +52,9 @@ interface LeaveRecord {
   to: Date;
   status: LeaveStatus;
   appliedOn: Date;
-  sendTo: string[]; 
+
+  sendTo: string[];
+
 }
 
 interface FormData {
@@ -60,7 +62,9 @@ interface FormData {
   fromDate: Date | null;
   toDate: Date | null;
   reason: string;
-  sendTo: string[]; 
+
+  sendTo: string[];
+
 }
 
 const schema = yup.object({
@@ -76,7 +80,9 @@ const schema = yup.object({
     .trim()
     .min(10, "Reason must be at least 10 characters")
     .required("Please enter reason"),
-  sendTo: yup.array().of(yup.string()).min(1,"please select atleast one recipient").required("please select at least one recipient"), 
+
+  sendTo: yup.array().of(yup.string()).min(1, "please select atleast one recipient").required("please select at least one recipient"),
+
 });
 
 const PAGE_SIZE = 5;
@@ -121,7 +127,8 @@ const Leaveemployee: React.FC = () => {
 
   const handleRealSubmit = async (data: FormData) => {
     try {
-      
+
+
       await new Promise((res) => setTimeout(res, 700));
 
       
@@ -139,13 +146,12 @@ const Leaveemployee: React.FC = () => {
       reset();
       setCurrentPage(1);
 
-      console.log("Leave submitted:", newLeave);
 
       toast({
         title: "Leave request submitted!",
-        description: `Sent to: ${
-          newLeave.sendTo.length > 0 ? newLeave.sendTo.join(", ") : "No one"
-        }`,
+        description: `Sent to: ${newLeave.sendTo.length > 0 ? newLeave.sendTo.join(", ") : "No one"
+          }`,
+
         status: "success",
         duration: 4000,
         isClosable: true,
@@ -216,7 +222,7 @@ const Leaveemployee: React.FC = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <Box maxW="900px" mx="auto" py={8} px={4} bg="gray.50" minH="100vh">
+    <Box maxW="1000px" mx="auto" py={8} px={4} bg="gray.50" minH="100vh">
       <Heading textAlign="center" mb={8} color="teal.600">
         Employee Leave Dashboard
       </Heading>
@@ -227,33 +233,43 @@ const Leaveemployee: React.FC = () => {
           label="Annual Leave"
           value={12}
           max={20}
-          colorScheme="green"
+
+          gradient="linear(to-r, teal.400, green.400)"
+
         />
         <SummaryCard
           icon={FiClock}
           label="Sick Leave"
           value={8}
           max={10}
-          colorScheme="yellow"
+
+          gradient="linear(to-r, yellow.400, orange.300)"
+
         />
         <SummaryCard
           icon={FiCalendar}
           label="Casual Leave"
           value={5}
           max={10}
-          colorScheme="blue"
+
+          gradient="linear(to-r, blue.400, cyan.400)"
+
         />
         <SummaryCard
           icon={FiCheckCircle}
           label="Used This Year"
           value={10}
           max={40}
-          colorScheme="purple"
+
+          gradient="linear(to-r, purple.500, pink.400)"
+
         />
       </SimpleGrid>
 
       <Box bg="white" p={6} rounded="md" shadow="md" mb={8}>
-        <Heading size="md" mb={4} color="teal.700">
+
+        <Heading size="md" mb={4} color="teal.600">
+
           Apply for Leave
         </Heading>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -293,7 +309,8 @@ const Leaveemployee: React.FC = () => {
                         endDate={watchToDate}
                         customInput={<Input />}
                       />
-                    
+
+
                     </InputGroup>
                   )}
                 />
@@ -337,13 +354,18 @@ const Leaveemployee: React.FC = () => {
               <FormErrorMessage>{errors.reason?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl pt={2} alignItems="flex-start">
+
+            <FormControl  pt={2} alignItems="flex-start" isInvalid={!!errors.sendTo}>
+
               <FormLabel>Send Request To (Optional)</FormLabel>
               <Controller
                 control={control}
                 name="sendTo"
                 render={({ field }) => (
-                  <CheckboxGroup {...field}
+
+                  <CheckboxGroup
+                    {...field}
+
                     colorScheme="teal"
                     value={field.value || []}
                     onChange={field.onChange}
@@ -361,10 +383,11 @@ const Leaveemployee: React.FC = () => {
 
             <Button
               type="submit"
-              colorScheme="teal"
+              colorScheme="blue"
               isLoading={isSubmitting}
               loadingText="Submitting"
               w="full"
+              
             >
               Submit Request
             </Button>
@@ -374,7 +397,9 @@ const Leaveemployee: React.FC = () => {
 
       <Box bg="white" p={6} rounded="md" shadow="md">
         <HStack justify="space-between" mb={4}>
-          <Heading size="md" color="teal.700">
+
+          <Heading size="md" color="teal.600">
+
             Leave History
           </Heading>
           <Button size="sm" onClick={() => setShowHistory(!showHistory)}>
@@ -403,61 +428,69 @@ const Leaveemployee: React.FC = () => {
                 <Th cursor="pointer" onClick={() => toggleSort("to")}>
                   To{renderSortIcon("to")}
                 </Th>
-                <Th>Status</Th>
+
+                <Th cursor="pointer" onClick={() => toggleSort("status")}>
+                  Status{renderSortIcon("status")}
+                </Th>
                 <Th cursor="pointer" onClick={() => toggleSort("appliedOn")}>
                   Applied On{renderSortIcon("appliedOn")}
                 </Th>
-                <Th>Send To</Th>
+               n <Th>Sent To</Th>
+
               </Tr>
             </Thead>
             <Tbody>
               {paginatedHistory.length === 0 && (
                 <Tr>
-                  <Td colSpan={6} textAlign="center" py={4}>
-                    No leave records found.
+
+                  <Td colSpan={6} textAlign="center" py={6}>
+                    No records found.
                   </Td>
                 </Tr>
               )}
-              {paginatedHistory.map((leave) => (
-                <Tr key={leave.id}>
-                  <Td>{leave.type}</Td>
-                  <Td>{leave.from.toLocaleDateString()}</Td>
-                  <Td>{leave.to.toLocaleDateString()}</Td>
+              {paginatedHistory.map((record) => (
+                <Tr key={record.id}>
+                  <Td>{record.type}</Td>
+                  <Td>{record.from.toLocaleDateString()}</Td>
+                  <Td>{record.to.toLocaleDateString()}</Td>
                   <Td>
                     <Badge
                       colorScheme={
-                        leave.status === "Approved"
+                        record.status === "Approved"
                           ? "green"
-                          : leave.status === "Pending"
-                          ? "yellow"
-                          : "red"
+                          : record.status === "Pending"
+                            ? "yellow"
+                            : "red"
                       }
                     >
-                      {leave.status}
+                      {record.status}
                     </Badge>
                   </Td>
-                  <Td>{leave.appliedOn.toLocaleDateString()}</Td>
-                  <Td>{leave.sendTo && leave.sendTo.length > 0 ? leave.sendTo.join(", ") : "—"}</Td>
+                  <Td>{record.appliedOn.toLocaleDateString()}</Td>
+                  <Td>{record.sendTo.join(", ") || "N/A"}</Td>
+
                 </Tr>
               ))}
             </Tbody>
           </Table>
 
-          <HStack justify="center" mt={4} spacing={4}>
+
+          <HStack justify="center" mt={4} spacing={2}>
             <Button
               size="sm"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              isDisabled={currentPage === 1}
             >
-              Previous
+              Prev
             </Button>
             <Text>
-              Page {currentPage} of {totalPages || 1}
+              Page {currentPage} of {totalPages}
             </Text>
             <Button
               size="sm"
-              disabled={currentPage === totalPages || totalPages === 0}
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              isDisabled={currentPage === totalPages || totalPages === 0}
+
             >
               Next
             </Button>
@@ -466,29 +499,38 @@ const Leaveemployee: React.FC = () => {
       </Box>
 
 
+      {/* Confirmation Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Leave Submission</ModalHeader>
+          <ModalHeader>Confirm Leave Request</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>
-              Leave Type: <strong>{formDataToSubmit?.leaveType}</strong>
-            </Text>
-            <Text>
-              From: <strong>{formDataToSubmit?.fromDate?.toLocaleDateString()}</strong>
-            </Text>
-            <Text>
-              To: <strong>{formDataToSubmit?.toDate?.toLocaleDateString()}</strong>
-            </Text>
-            <Text>
-              Reason: <strong>{formDataToSubmit?.reason}</strong>
-            </Text>
-            <Text mt={3}>
-              {formDataToSubmit?.sendTo.length
-                ? `This request will be sent to: ${formDataToSubmit?.sendTo.join(", ")}`
-                : "This request will not be sent to anyone."}
-            </Text>
+            <Text mb={2}>Please confirm your leave request details:</Text>
+            {formDataToSubmit && (
+              <VStack align="start" spacing={1}>
+                <Text>
+                  <b>Leave Type:</b> {formDataToSubmit.leaveType}
+                </Text>
+                <Text>
+                  <b>From:</b>{" "}
+                  {formDataToSubmit.fromDate?.toLocaleDateString() ?? ""}
+                </Text>
+                <Text>
+                  <b>To:</b> {formDataToSubmit.toDate?.toLocaleDateString() ?? ""}
+                </Text>
+                <Text>
+                  <b>Reason:</b> {formDataToSubmit.reason}
+                </Text>
+                <Text>
+                  <b>Send To:</b>{" "}
+                  {formDataToSubmit.sendTo.length > 0
+                    ? formDataToSubmit.sendTo.join(", ")
+                    : "No one"}
+                </Text>
+              </VStack>
+            )}
+
           </ModalBody>
 
           <ModalFooter>
@@ -499,19 +541,16 @@ const Leaveemployee: React.FC = () => {
                 if (formDataToSubmit) {
                   handleRealSubmit(formDataToSubmit);
                   setIsModalOpen(false);
-                  setFormDataToSubmit(null);
+
+
                 }
               }}
             >
               Confirm
             </Button>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setIsModalOpen(false);
-                setFormDataToSubmit(null);
-              }}
-            >
+
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+
               Cancel
             </Button>
           </ModalFooter>
@@ -522,11 +561,11 @@ const Leaveemployee: React.FC = () => {
 };
 
 interface SummaryCardProps {
-  icon: React.ElementType;
+  icon: React.ComponentType;
   label: string;
   value: number;
   max: number;
-  colorScheme: string;
+  gradient: string;
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
@@ -534,33 +573,43 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   label,
   value,
   max,
-  colorScheme,
+
+  gradient,
 }) => {
-  const percent = Math.min((value / max) * 100, 100);
+  const percentage = (value / max) * 100;
 
   return (
     <Box
-      bg="white"
-      p={4}
+      bgGradient={gradient}
+      color="white"
+      p={5}
       rounded="md"
-      shadow="md"
-      textAlign="center"
-      color={`${colorScheme}.700`}
+      boxShadow="md"
+      cursor="default"
     >
-      <Icon size={30} />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
-        {label}
-      </Text>
-      <Progress
-        value={percent}
-        size="sm"
-        colorScheme={colorScheme}
-        borderRadius="md"
-        mt={2}
-      />
-      <Text mt={1} fontSize="sm" color={`${colorScheme}.600`}>
+      <HStack spacing={3} mb={3}>
+        <Box as={Icon} boxSize={6} />
+        <Text fontWeight="bold" fontSize="lg">
+          {label}
+        </Text>
+      </HStack>
+      <Text fontSize="2xl" fontWeight="bold">
         {value} / {max}
       </Text>
+      <Progress
+        mt={3}
+        value={percentage}
+        size="sm"
+        colorScheme="whiteAlpha"
+        bg="whiteAlpha.300"
+        sx={{
+          "> div": {
+            bgColor: "whiteAlpha.800",
+            filter: "brightness(1.2)",
+          },
+        }}
+      />
+
     </Box>
   );
 };
