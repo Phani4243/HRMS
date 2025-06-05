@@ -103,8 +103,8 @@ export default function Settingsemp({
 
       <VStack spacing={8} align="stretch">
 
-        <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading fontSize="xl" mb={4}>
+        <Box bg="gray.50"  p={6} rounded="md" boxShadow="md">
+          <Heading color="teal.600" fontSize="xl" mb={4}>
             Profile Information
           </Heading>
           <Stack spacing={4}>
@@ -137,7 +137,7 @@ export default function Settingsemp({
 
 
         <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading fontSize="xl" mb={4}>
+          <Heading color="teal.600" fontSize="xl" mb={4}>
             Change Password
           </Heading>
           <Stack spacing={4}>
@@ -181,7 +181,7 @@ export default function Settingsemp({
         </Box>
 
         <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading fontSize="xl" mb={4}>
+          <Heading color="teal.600" fontSize="xl" mb={4}>
             Notifications
           </Heading>
           <Stack spacing={4}>
