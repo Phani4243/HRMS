@@ -291,12 +291,25 @@ export default function DashboardLayout() {
                   <FiChevronDown />
                 </HStack>
               </MenuButton>
-              <MenuList>
-                <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
-                <MenuItem onClick={handleGoToSettings}>Settings</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuList
+                bg={useColorModeValue('white', 'red.800')}
+                color={useColorModeValue('gray.800', 'white')}
+                border="1px solid"
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                boxShadow="lg"
+              >
+                <MenuItem _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }} onClick={handleGoToProfile}>
+                  Profile
+                </MenuItem>
+                <MenuItem _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }} onClick={handleGoToSettings}>
+                  Settings
+                </MenuItem>
+                <MenuItem _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }} onClick={handleLogout}>
+                  Logout
+                </MenuItem>
               </MenuList>
             </Menu>
+
           </HStack>
         </Flex>
 

@@ -96,7 +96,7 @@ export default function Settingsemp({
   };
 
   return (
-    <Box maxW="3xl" mx="auto" p={6}>
+    <Box maxW="1000px" mx="auto" p={6}>
       <Heading size="lg" color="teal.600" mb={6} textAlign="center">
         Account Settings
       </Heading>
