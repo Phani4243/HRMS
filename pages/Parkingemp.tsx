@@ -24,14 +24,11 @@ interface ParkingSlot {
 }
 
 const initialSlots: ParkingSlot[] = [
-
   { id: 1, slotNumber: 'A1', occupied: false, disabledOnly: false },
   { id: 2, slotNumber: 'A2', occupied: true, occupantName: 'Ram Kumar', disabledOnly: false },
   { id: 3, slotNumber: 'A3', occupied: false, disabledOnly: false },
   { id: 4, slotNumber: 'A4', occupied: false, disabledOnly: false },
   { id: 5, slotNumber: 'A5', occupied: true, occupantName: 'Sita Sharma', disabledOnly: false },
-
-  
   { id: 6, slotNumber: 'D1', occupied: false, disabledOnly: true },
   { id: 7, slotNumber: 'D2', occupied: true, occupantName: 'John Doe', disabledOnly: true },
   { id: 8, slotNumber: 'D3', occupied: false, disabledOnly: true },
@@ -64,18 +61,22 @@ const ParkingSlots: React.FC = () => {
   const regularSlots = slots.filter((slot) => !slot.disabledOnly);
   const disabledSlots = slots.filter((slot) => slot.disabledOnly);
 
+  const getSlotBackground = (slot: ParkingSlot) => {
+    if (slot.disabledOnly) {
+      return 'linear-gradient(135deg, #7F00FF 0%, #E100FF 100%)'; // purple gradient
+    }
+    if (slot.occupied) {
+      return 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)'; // red gradient
+    }
+    return 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'; // green gradient
+  };
+
   const renderSlot = (slot: ParkingSlot) => (
     <GridItem
       key={slot.id}
       p={4}
       borderRadius="md"
-      bg={
-        slot.disabledOnly
-          ? 'purple.500'
-          : slot.occupied
-          ? 'red.400'
-          : 'green.400'
-      }
+      bg={getSlotBackground(slot)}
       color="white"
       textAlign="center"
       cursor={!slot.disabledOnly ? 'pointer' : 'not-allowed'}
@@ -103,23 +104,21 @@ const ParkingSlots: React.FC = () => {
 
   return (
     <Box maxW="1000px" mx="auto" p={6} bg={bg} borderRadius="md" boxShadow="md">
-      <Heading mb={6} color="blue.600" textAlign="center">
+      <Heading mb={6} size="lg" color="teal.600" textAlign="center">
         Employee Parking Overview
       </Heading>
 
-      
       <Box mb={8}>
-        <Heading size="md" mb={4} color="gray.700">Regular Parking</Heading>
-        <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
+        <Heading size="md" mb={4} color="teal.600">Regular Parking</Heading>
+        <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))"  gap={4}>
           {regularSlots.map(renderSlot)}
         </Grid>
       </Box>
 
       <Divider my={6} />
 
-      
       <Box>
-        <Heading size="md" mb={4} color="gray.700">
+        <Heading size="md" mb={4} color="teal.600">
           Reserved Parking for Disabled Employees
         </Heading>
         <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
@@ -127,9 +126,8 @@ const ParkingSlots: React.FC = () => {
         </Grid>
       </Box>
 
-      
       <Box mt={8} p={4} border="1px solid" borderColor="gray.300" borderRadius="md">
-        <Heading size="sm" mb={3}>
+        <Heading size="sm" color="teal.600" mb={3}>
           Legend
         </Heading>
         <HStack spacing={6}>

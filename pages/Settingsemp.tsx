@@ -97,12 +97,12 @@ export default function Settingsemp({
 
   return (
     <Box maxW="3xl" mx="auto" p={6}>
-      <Heading size="lg" mb={6} textAlign="center">
+      <Heading size="lg" color="teal.600" mb={6} textAlign="center">
         Account Settings
       </Heading>
 
       <VStack spacing={8} align="stretch">
-        
+
         <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
           <Heading fontSize="xl" mb={4}>
             Profile Information
@@ -213,7 +213,7 @@ export default function Settingsemp({
           </Stack>
         </Box>
 
-    
+
         <Button colorScheme="green" size="lg" alignSelf="flex-end" onClick={handleSave}>
           Save All Settings
         </Button>

@@ -132,7 +132,7 @@ const Payslipemp: React.FC = () => {
       <Flex justify="space-between" align="center" mb={10} wrap="wrap">
         <Box>
           <Heading size="lg" color="teal.600">Employee Payslip Portal</Heading>
-          <Text fontSize="md" mt={2}>{username} ({username}12345)</Text>
+          <Text color="teal.600" fontSize="md" mt={2}>{username} ({username}12345)</Text>
         </Box>
       </Flex>
 
@@ -163,7 +163,7 @@ const Payslipemp: React.FC = () => {
 
           <Box display="flex" alignItems="flex-end">
             <Button
-              colorScheme="teal"
+              colorScheme="blue"
               w="full"
               onClick={handlePrint}
               leftIcon={<DownloadIcon />}

@@ -1,11 +1,45 @@
 import React, { useState } from 'react';
-import {ChakraProvider,Box,Flex,HStack,VStack,Text,Input,IconButton,Avatar,Menu,MenuButton,MenuList,MenuItem,Badge,Tooltip,useColorModeValue,Button, Spacer,} from '@chakra-ui/react';
-import {FiHome,FiUsers,FiCheckSquare,FiCpu,FiCalendar, FiUserPlus,FiMessageCircle,FiSettings,FiBell,FiSearch,FiChevronDown,FiMenu, FiFileText, FiClock,} from 'react-icons/fi';
+import {
+  ChakraProvider,
+  Box,
+  Flex,
+  HStack,
+  VStack,
+  Text,
+  Input,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Badge,
+  Tooltip,
+  useColorModeValue,
+  Button,
+  Spacer,
+} from '@chakra-ui/react';
+import {
+  FiHome,
+  FiUsers,
+  FiCheckSquare,
+  FiCpu,
+  FiCalendar,
+  FiUserPlus,
+  FiMessageCircle,
+  FiSettings,
+  FiBell,
+  FiSearch,
+  FiChevronDown,
+  FiMenu,
+  FiFileText,
+  FiClock,
+} from 'react-icons/fi';
 import { useRouter } from 'next/router';
-import Dashboardemp from "./Dashboardemp";
-import Usersemp from "./Usersemp";
+import Dashboardemp from './Dashboardemp';
+import Usersemp from './Usersemp';
 import Leaveemployee from './Leaveemployee';
-import Calenderemp from "./Calenderemp";
+import Calenderemp from './Calenderemp';
 import Payslipemp from './Payslipemp';
 import Checklistemp from './Checklistemp';
 import Recruitemp from './Recruitemp';
@@ -13,6 +47,7 @@ import Parkingemp from './Parkingemp';
 import Messagesemp from './Messagesemp';
 import Settingsemp from './Settingsemp';
 import Profileemp from './Profileemp';
+
 const navItems = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'bookings', label: 'Bookings' },
@@ -23,71 +58,69 @@ const navItems = [
 const sidebarItems = [
   { key: 'dashboard', icon: FiHome, label: 'Dashboard' },
   { key: 'users', icon: FiUsers, label: 'Users' },
-  {key: 'payslip', icon: FiFileText, label: 'payslip'},
-  {key:'leave', icon: FiClock, label:'leave'},
+  { key: 'payslip', icon: FiFileText, label: 'Payslip' },
+  { key: 'leave', icon: FiClock, label: 'Leave' },
   { key: 'checklist', icon: FiCheckSquare, label: 'Checklist' },
   { key: 'parking', icon: FiCpu, label: 'Parking' },
   { key: 'calendar', icon: FiCalendar, label: 'Calendar' },
   { key: 'recruit', icon: FiUserPlus, label: 'Recruit' },
   { key: 'messages', icon: FiMessageCircle, label: 'Messages' },
 ];
-const settingsItem = { key: 'settings', icon: FiSettings, label: 'Settings' };
 
+const settingsItem = { key: 'settings', icon: FiSettings, label: 'Settings' };
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
-  const topbarBg = useColorModeValue('white', 'gray.900');
-  const sidebarBg = useColorModeValue('white', 'gray.800');
   const bg = useColorModeValue('gray.50', 'gray.800');
+  const sidebarBg = useColorModeValue('white', 'gray.800');
   const router = useRouter();
   const rawUsername = router.query.username;
   const username = Array.isArray(rawUsername) ? rawUsername[0] : rawUsername || 'User';
+
   const handleClick = () => {
-  setActiveTab('messages');
-  }
+    setActiveTab('messages');
+  };
   const handleGoToSettings = () => {
-  setActiveTab('settings')
+    setActiveTab('settings');
+  };
+  const handleGoToProfile = () => {
+    setActiveTab('profile');
+  };
+  const handleLogout = () => {
+    router.push('/');
   };
 
-const handleGoToProfile = () => {
-  setActiveTab('profile')
-};
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: 'New leave request pending approval.', time: '2m ago', read: false },
+    { id: 2, message: 'Payslip for May is now available.', time: '1h ago', read: false },
+    { id: 3, message: 'Team meeting at 3 PM.', time: 'Today', read: true },
+  ]);
 
-const handleLogout = () => {
-  router.push('/'); 
-};
-
-const [notifications, setNotifications] = useState([
-  { id: 1, message: 'New leave request pending approval.', time: '2m ago', read: false },
-  { id: 2, message: 'Payslip for May is now available.', time: '1h ago', read: false },
-  { id: 3, message: 'Team meeting at 3 PM.', time: 'Today', read: true },
-]);
-const renderContent = () => {
-  const props = {searchQuery};
+  const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboardemp searchQuery={searchQuery}/>;
+        return <Dashboardemp searchQuery={searchQuery} />;
       case 'users':
-        return <Usersemp searchQuery={searchQuery}/>;
+        return <Usersemp searchQuery={searchQuery} />;
       case 'payslip':
-          return <Payslipemp/>;
+        return <Payslipemp />;
       case 'leave':
-          return<Leaveemployee/>;
+        return <Leaveemployee />;
       case 'calendar':
-           return <Calenderemp/>;
-       case 'checklist':
-          return <Checklistemp/>;
+        return <Calenderemp />;
+      case 'checklist':
+        return <Checklistemp />;
       case 'parking':
-         return <Parkingemp/>;
+        return <Parkingemp />;
       case 'recruit':
-          return <Recruitemp/>;
+        return <Recruitemp />;
       case 'messages':
-        return <Messagesemp/>;
+        return <Messagesemp />;
       case 'settings':
-        return <Settingsemp/>;
-       case 'profile':
-        return<Profileemp/>; 
+        return <Settingsemp />;
+      case 'profile':
+        return <Profileemp />;
       case 'bookings':
         return <Text>Here are your Bookings.</Text>;
       case 'newsrooms':
@@ -102,22 +135,21 @@ const renderContent = () => {
   return (
     <ChakraProvider>
       <Flex direction="column" height="100vh" bg={bg}>
-        
+        {/* Header with fixed teal background */}
         <Flex
           height="60px"
-          bg={topbarBg}
+          bg="teal.500"
+          color="white"
           px={6}
           align="center"
           justify="space-between"
-          borderBottom="1px solid"
-          borderColor="gray.200"
+          boxShadow="sm"
           position="fixed"
           top="0"
           left="0"
           right="0"
           zIndex="1000"
         >
-          
           <Menu>
             <MenuButton
               as={IconButton}
@@ -126,6 +158,7 @@ const renderContent = () => {
               aria-label="Open menu"
               display={{ base: 'inline-flex', md: 'none' }}
               mr={4}
+              color="white"
             />
             <MenuList>
               {navItems.map((item) => (
@@ -136,7 +169,7 @@ const renderContent = () => {
             </MenuList>
           </Menu>
 
-          <Text fontWeight="bold" fontSize="xl" color="green.600" cursor="pointer">
+          <Text fontWeight="bold" fontSize="xl" cursor="pointer" color="white">
             AVLR
           </Text>
 
@@ -151,7 +184,7 @@ const renderContent = () => {
               <Button
                 key={item.key}
                 variant={activeTab === item.key ? 'solid' : 'ghost'}
-                colorScheme={activeTab === item.key ? 'blue' : 'gray'}
+                colorScheme={activeTab === item.key ? 'blue' : 'whiteAlpha'}
                 onClick={() => setActiveTab(item.key)}
                 size="sm"
               >
@@ -160,74 +193,84 @@ const renderContent = () => {
             ))}
           </HStack>
 
-          <HStack spacing={4} ml="auto">
-                        <Box maxW="200px" position="relative">
+          <HStack spacing={4} ml="auto" color="white">
+            <Box maxW="200px" position="relative">
               <Input
                 placeholder="Search..."
                 size="sm"
-                bg={useColorModeValue('gray.100', 'gray.700')}
+                bg="teal.600"
                 borderRadius="md"
                 pl={8}
-                value = {searchQuery}
-                onChange = {(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                _placeholder={{ color: 'teal.200' }}
+                color="white"
+                border="none"
+                _focus={{ bg: 'teal.700' }}
               />
               <Box
                 position="absolute"
                 left={2}
                 top="50%"
                 transform="translateY(-50%)"
-                color="gray.500"
+                color="teal.200"
                 pointerEvents="none"
               >
                 <FiSearch />
               </Box>
             </Box>
-      <Menu>
-             <Tooltip label="Notifications" hasArrow>
-            <MenuButton as={Box} position="relative">
-             <IconButton
-              aria-label="Notifications"
-              icon={<FiBell />}
-              variant="ghost"
-              fontSize="20px"
-              />
-            {notifications.some((n) => !n.read) && (
-            <Badge
-             position="absolute"
-             top="0"
-             right="0"
-             fontSize="0.65em"
-             colorScheme="red"
-             borderRadius="full"
-             px={2}
-             >
-           {notifications.filter((n) => !n.read).length}
-          </Badge>
-         )}
-         </MenuButton>
-        </Tooltip>
-        <MenuList maxW="300px">
-        {notifications.length === 0 ? (
-          <Text px={4} py={2}>No new notifications</Text>
-         ) : (
-          notifications.map((note) => (
-          <MenuItem key={note.id} whiteSpace="normal">
-          <Box>
-            <Text fontWeight={note.read ? 'normal' : 'bold'}>{note.message}</Text>
-            <Text fontSize="xs" color="gray.500">{note.time}</Text>
-          </Box>
-        </MenuItem>
-      ))
-    )}
-    <MenuItem
-      onClick={() =>
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-      }
-    >
-      Mark all as read
-    </MenuItem>
-  </MenuList>
-</Menu>
+
+            <Menu>
+              <Tooltip label="Notifications" hasArrow>
+                <MenuButton as={Box} position="relative">
+                  <IconButton
+                    aria-label="Notifications"
+                    icon={<FiBell />}
+                    variant="ghost"
+                    fontSize="20px"
+                    color="white"
+                  />
+                  {notifications.some((n) => !n.read) && (
+                    <Badge
+                      position="absolute"
+                      top="0"
+                      right="0"
+                      fontSize="0.65em"
+                      colorScheme="red"
+                      borderRadius="full"
+                      px={2}
+                    >
+                      {notifications.filter((n) => !n.read).length}
+                    </Badge>
+                  )}
+                </MenuButton>
+              </Tooltip>
+              <MenuList maxW="300px">
+                {notifications.length === 0 ? (
+                  <Text px={4} py={2}>
+                    No new notifications
+                  </Text>
+                ) : (
+                  notifications.map((note) => (
+                    <MenuItem key={note.id} whiteSpace="normal">
+                      <Box>
+                        <Text fontWeight={note.read ? 'normal' : 'bold'}>{note.message}</Text>
+                        <Text fontSize="xs" color="gray.500">
+                          {note.time}
+                        </Text>
+                      </Box>
+                    </MenuItem>
+                  ))
+                )}
+                <MenuItem
+                  onClick={() =>
+                    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+                  }
+                >
+                  Mark all as read
+                </MenuItem>
+              </MenuList>
+            </Menu>
 
             <Tooltip label="Messages" hasArrow>
               <IconButton
@@ -235,7 +278,8 @@ const renderContent = () => {
                 icon={<FiMessageCircle />}
                 variant="ghost"
                 fontSize="20px"
-                 onClick={handleClick}
+                color="white"
+                onClick={handleClick}
               />
             </Tooltip>
 
@@ -256,8 +300,8 @@ const renderContent = () => {
           </HStack>
         </Flex>
 
+        {/* Sidebar */}
         <Flex flex="1" pt="60px" height="calc(100vh - 60px)">
-      
           <VStack
             bg={sidebarBg}
             width="220px"
@@ -303,6 +347,7 @@ const renderContent = () => {
             </Button>
           </VStack>
 
+          {/* Main content */}
           <Box
             ml="220px"
             p={6}

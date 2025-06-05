@@ -36,11 +36,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-
 interface DashboardempProps {
   searchQuery: string;
 }
-
 
 const stats = [
   {
@@ -49,7 +47,8 @@ const stats = [
     value: 153,
     change: "+8%",
     icon: FiCheckCircle,
-    color: "green.500",
+    color: "white",
+    bg: "linear(to-r, green.400, green.600)",
   },
   {
     id: 2,
@@ -57,7 +56,8 @@ const stats = [
     value: 12,
     change: "+2%",
     icon: FiBriefcase,
-    color: "blue.500",
+    color: "white",
+    bg: "linear(to-r, blue.400, blue.600)",
   },
   {
     id: 3,
@@ -65,7 +65,8 @@ const stats = [
     value: 27,
     change: "+0%",
     icon: FiUsers,
-    color: "purple.500",
+    color: "white",
+    bg: "linear(to-r, purple.400, purple.600)",
   },
   {
     id: 4,
@@ -73,10 +74,10 @@ const stats = [
     value: 5,
     change: "-1%",
     icon: FiMessageCircle,
-    color: "orange.400",
+    color: "white",
+    bg: "linear(to-r, orange.400, orange.600)",
   },
 ];
-
 
 const taskData = [
   { day: "Mon", tasks: 22 },
@@ -103,8 +104,9 @@ const statusColorMap: Record<string, string> = {
 };
 
 const Dashboardemp: React.FC<DashboardempProps> = ({ searchQuery }) => {
+  const bgPage = useColorModeValue("gray.50", "gray.800");
   const bgCard = useColorModeValue("white", "gray.700");
-  const bgSection = useColorModeValue("gray.50", "gray.800");
+  const bgTableHeader = useColorModeValue("gray.100", "gray.900");
   const textColor = useColorModeValue("gray.800", "gray.100");
 
   const filteredTasks = recentTasks.filter((task) => {
@@ -118,17 +120,26 @@ const Dashboardemp: React.FC<DashboardempProps> = ({ searchQuery }) => {
   });
 
   return (
-    <VStack spacing={8} align="stretch" p={6} bg={bgSection} borderRadius="md" boxShadow="sm">
-    
+    <VStack maxW="1000px" spacing={8} align="stretch" p={6} bg={bgPage} minH="100vh">
+      {/* Stat Cards */}
       <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
-        {stats.map(({ id, label, value, change, icon, color }) => (
-          <Box key={id} p={6} bg={bgCard} borderRadius="md" boxShadow="md" _hover={{ boxShadow: "xl" }}>
+        {stats.map(({ id, label, value, change, icon, color, bg }) => (
+          <Box
+            key={id}
+            p={6}
+            bgGradient={bg}
+            color={color}
+            borderRadius="lg"
+            boxShadow="lg"
+            transition="all 0.3s"
+            _hover={{ transform: "translateY(-6px)", boxShadow: "xl" }}
+          >
             <HStack spacing={4} mb={3}>
-              <Icon as={icon} boxSize={8} color={color} />
+              <Icon as={icon} boxSize={8} />
               <Stat>
-                <StatLabel fontWeight="medium" color={textColor}>{label}</StatLabel>
-                <StatNumber fontSize="2xl" fontWeight="bold" color={textColor}>{value}</StatNumber>
-                <StatHelpText color={change.startsWith("+") ? "green.400" : "red.400"} fontSize="sm">
+                <StatLabel fontWeight="medium">{label}</StatLabel>
+                <StatNumber fontSize="2xl" fontWeight="bold">{value}</StatNumber>
+                <StatHelpText color="whiteAlpha.800">
                   {change} vs last week
                 </StatHelpText>
               </Stat>
@@ -137,9 +148,11 @@ const Dashboardemp: React.FC<DashboardempProps> = ({ searchQuery }) => {
         ))}
       </SimpleGrid>
 
-      
-      <Box p={6} bg={bgCard} borderRadius="md" boxShadow="md" height={{ base: "300px", md: "350px" }}>
-        <Text fontSize="xl" fontWeight="semibold" mb={6} color={textColor}>Tasks Completed (Last 7 Days)</Text>
+      {/* Line Chart */}
+      <Box p={6} bg={bgCard} borderRadius="lg" boxShadow="lg" height={{ base: "300px", md: "350px" }}>
+        <Text fontSize="xl" fontWeight="semibold" mb={6} color="teal.600">
+          Tasks Completed (Last 7 Days)
+        </Text>
         <ResponsiveContainer width="100%" height="85%">
           <LineChart data={taskData}>
             <CartesianGrid strokeDasharray="3 3" stroke={useColorModeValue("#e2e8f0", "#2d3748")} />
@@ -161,11 +174,13 @@ const Dashboardemp: React.FC<DashboardempProps> = ({ searchQuery }) => {
         </ResponsiveContainer>
       </Box>
 
-      
-      <Box p={6} bg={bgCard} borderRadius="md" boxShadow="md" overflowX="auto">
-        <Text fontSize="xl" fontWeight="semibold" mb={4} color={textColor}>Recent Tasks</Text>
+      {/* Task Table */}
+      <Box p={6} bg={bgCard} borderRadius="lg" boxShadow="lg" overflowX="auto">
+        <Text fontSize="xl" fontWeight="semibold" color="teal.600" mb={4} >
+          Recent Tasks
+        </Text>
         <Table variant="simple" size="md">
-          <Thead bg={useColorModeValue("gray.100", "gray.900")}>
+          <Thead bg={bgTableHeader}>
             <Tr>
               <Th>Task ID</Th>
               <Th>Task Name</Th>
@@ -202,10 +217,10 @@ const Dashboardemp: React.FC<DashboardempProps> = ({ searchQuery }) => {
         </Table>
       </Box>
 
-      
+      {/* Action Buttons */}
       <HStack spacing={4} justify="flex-end">
-        <Button colorScheme="blue">Create New Task</Button>
-        <Button colorScheme="gray" variant="outline">View Reports</Button>
+        <Button colorScheme="blue" size="lg">Create New Task</Button>
+        <Button colorScheme="gray" variant="outline" size="lg">View Reports</Button>
       </HStack>
     </VStack>
   );

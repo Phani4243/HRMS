@@ -13,6 +13,8 @@ import {
   Text,
   Divider,
   FormErrorMessage,
+  SimpleGrid,
+  Stack,
 } from '@chakra-ui/react';
 
 interface Candidate {
@@ -97,19 +99,25 @@ const Recruitemp: React.FC = () => {
   };
 
   return (
-    <Box maxW="600px" mx="auto" p={6} boxShadow="lg" borderRadius="lg" bg="white">
-      <Heading mb={4} color="blue.600" textAlign="center">
+    <Box
+      maxW="1000px"
+      mx="auto"
+      p={8}
+      boxShadow="2xl"
+      borderRadius="xl"
+      bg="white"
+      _dark={{ bg: 'gray.700' }}
+    >
+      <Heading mb={6} size="lg" color="teal.600" textAlign="center" fontWeight="extrabold" fontSize="3xl">
         Recruitment Form
       </Heading>
 
-      <Text mb={6} color="gray.600" fontSize="sm" textAlign="center">
+      <Text mb={8} color="gray.600" fontSize="md" textAlign="center" maxW="500px" mx="auto">
         Please fill in your details to apply for a role at our company.
       </Text>
 
       <form onSubmit={handleSubmit}>
-        <VStack spacing={4} align="stretch">
-          <Divider />
-
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
           <FormControl isRequired isInvalid={!!errors.fullName}>
             <FormLabel>Full Name</FormLabel>
             <Input
@@ -117,6 +125,10 @@ const Recruitemp: React.FC = () => {
               value={candidate.fullName}
               onChange={handleChange}
               placeholder="Enter full name"
+              size="lg"
+              focusBorderColor="blue.400"
+              bg="gray.50"
+              _dark={{ bg: 'gray.600' }}
             />
             <FormErrorMessage>{errors.fullName}</FormErrorMessage>
           </FormControl>
@@ -129,6 +141,10 @@ const Recruitemp: React.FC = () => {
               value={candidate.email}
               onChange={handleChange}
               placeholder="Enter email address"
+              size="lg"
+              focusBorderColor="blue.400"
+              bg="gray.50"
+              _dark={{ bg: 'gray.600' }}
             />
             <FormErrorMessage>{errors.email}</FormErrorMessage>
           </FormControl>
@@ -141,10 +157,12 @@ const Recruitemp: React.FC = () => {
               value={candidate.phone}
               onChange={handleChange}
               placeholder="Enter phone number"
+              size="lg"
+              focusBorderColor="blue.400"
+              bg="gray.50"
+              _dark={{ bg: 'gray.600' }}
             />
           </FormControl>
-
-          <Divider />
 
           <FormControl isRequired isInvalid={!!errors.position}>
             <FormLabel>Position Applied For</FormLabel>
@@ -153,6 +171,10 @@ const Recruitemp: React.FC = () => {
               value={candidate.position}
               onChange={handleChange}
               placeholder="Select position"
+              size="lg"
+              focusBorderColor="blue.400"
+              bg="gray.50"
+              _dark={{ bg: 'gray.600' }}
             >
               <option value="Frontend Developer">Frontend Developer</option>
               <option value="Backend Developer">Backend Developer</option>
@@ -173,6 +195,10 @@ const Recruitemp: React.FC = () => {
               placeholder="Enter years of experience"
               min={0}
               max={50}
+              size="lg"
+              focusBorderColor="blue.400"
+              bg="gray.50"
+              _dark={{ bg: 'gray.600' }}
             />
           </FormControl>
 
@@ -184,31 +210,43 @@ const Recruitemp: React.FC = () => {
               value={candidate.resumeLink}
               onChange={handleChange}
               placeholder="Paste resume URL (Google Drive, etc.)"
+              size="lg"
+              focusBorderColor="blue.400"
+              bg="gray.50"
+              _dark={{ bg: 'gray.600' }}
             />
           </FormControl>
+        </SimpleGrid>
 
-          <FormControl>
-            <FormLabel>Additional Notes</FormLabel>
-            <Textarea
-              name="notes"
-              value={candidate.notes}
-              onChange={handleChange}
-              placeholder="Add any additional information"
-              resize="vertical"
-            />
-          </FormControl>
+        <FormControl mt={6}>
+          <FormLabel>Additional Notes</FormLabel>
+          <Textarea
+            name="notes"
+            value={candidate.notes}
+            onChange={handleChange}
+            placeholder="Add any additional information"
+            resize="vertical"
+            size="lg"
+            focusBorderColor="blue.400"
+            bg="gray.50"
+            _dark={{ bg: 'gray.600' }}
+          />
+        </FormControl>
 
+        <Stack mt={8} direction={{ base: 'column', md: 'row' }} spacing={4} justify="center">
           <Button
             type="submit"
             colorScheme="blue"
-            width="full"
-            mt={4}
+            size="lg"
+            px={12}
             isLoading={isSubmitting}
             loadingText="Submitting..."
+            shadow="md"
+            _hover={{ shadow: 'lg' }}
           >
             Submit Application
           </Button>
-        </VStack>
+        </Stack>
       </form>
     </Box>
   );
