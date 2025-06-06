@@ -66,7 +66,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Settings', icon: FiSettings, path: '/settings' },
 ];
 
-const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+const SidebarContent = ({ onClose, display }: SidebarProps) => {
   return (
     <Box
       transition="0.3s ease"
@@ -79,7 +79,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       top="0"
       left="0"
       h="100vh"
-      {...rest}
+      display={display}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontWeight="bold" fontFamily="heading">
@@ -117,8 +117,7 @@ const NavItem = ({ icon, path, children }: NavItemProps) => {
           color: 'white',
         }}
       >
-        {icon && <Icon mr="4" fontSize="18" as={icon} />}
-        <Text fontWeight="medium">{children}</Text>
+        {icon && <Icon mr="4" fontSize="18" as={icon} />}<Text fontWeight="medium">{children}</Text>
       </Flex>
     </Link>
   );
@@ -164,11 +163,7 @@ const MobileNav = ({ onOpen }: MobileProps) => {
           <MenuButton py={2}>
             <HStack>
               <Avatar size="sm" name="Ankit Yadav" />
-              <VStack
-                spacing="1px"
-                alignItems="flex-start"
-                display={{ base: 'none', md: 'flex' }}
-              >
+              <VStack spacing="1px" alignItems="flex-start" display={{ base: 'none', md: 'flex' }}>
                 <Text fontSize="sm" fontWeight="bold">
                   Ankit Yadav
                 </Text>
@@ -198,10 +193,8 @@ const SidebarWithHeader = ({ children }: { children: ReactNode }) => {
 
   return (
     <Box minH="100vh" bg="gray.100">
-      {/* Sidebar */}
       <SidebarContent onClose={onClose} display={{ base: 'none', md: 'block' }} />
 
-      {/* Drawer Sidebar (Mobile) */}
       <Drawer
         isOpen={isOpen}
         placement="left"
@@ -211,29 +204,15 @@ const SidebarWithHeader = ({ children }: { children: ReactNode }) => {
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent onClose={onClose} display={{ base: 'block', md: 'none' }} />
         </DrawerContent>
       </Drawer>
 
-      {/* Fixed Header */}
-      <Box
-        position="fixed"
-        top="0"
-        left={{ base: 0, md: 60 }}
-        right="0"
-        zIndex="1000"
-        height="80px"
-        bg="teal.500"
-      >
+      <Box position="fixed" top="0" left={{ base: 0, md: 60 }} right="0" zIndex="1000" height="80px" bg="teal.500">
         <MobileNav onOpen={onOpen} />
       </Box>
 
-      {/* Main content */}
-      <Box
-        ml={{ base: 0, md: 60 }}
-        mt="80px" // Apply margin ONLY to content
-        p="4"
-      >
+      <Box ml={{ base: 0, md: 60 }} mt="80px" p="4">
         {children}
       </Box>
     </Box>
