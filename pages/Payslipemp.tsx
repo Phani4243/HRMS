@@ -14,11 +14,14 @@ import {
   Divider,
   Badge,
   SimpleGrid,
-  Image,
+  useColorMode,
+  useColorModeValue,
+  IconButton
 } from '@chakra-ui/react';
-import { DownloadIcon } from '@chakra-ui/icons';
+import { DownloadIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { useReactToPrint } from 'react-to-print';
 import { useRouter } from 'next/router';
+
 interface PayslipData {
   month: string;
   basic: number;
@@ -46,11 +49,14 @@ const payslips: PayslipData[] = [
 const PayslipCard = React.forwardRef<HTMLDivElement, { payslip: PayslipData }>(({ payslip }, ref) => {
   const totalEarnings = payslip.basic + payslip.hra + payslip.conveyance + payslip.medical;
   const netPay = totalEarnings - payslip.deductions;
-  
+
+  const cardBg = useColorModeValue('white', 'gray.700');
+  const textColor = useColorModeValue('blue.800', 'teal.300');
+
   return (
     <Box
       ref={ref}
-      bg="white"
+      bg={cardBg}
       borderRadius="xl"
       p={6}
       boxShadow="2xl"
@@ -59,8 +65,8 @@ const PayslipCard = React.forwardRef<HTMLDivElement, { payslip: PayslipData }>((
       _hover={{ transform: 'scale(1.01)' }}
     >
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="lg" fontWeight="bold" color="blue.800">Payslip — {payslip.month}</Text>
-        <Badge colorScheme="green" fontSize="md" px={4} py={1} borderRadius="md">
+        <Text fontSize="lg" fontWeight="bold" color={textColor}>Payslip — {payslip.month}</Text>
+        <Badge colorScheme="teal" fontSize="md" px={4} py={1} borderRadius="md">
           ₹ {netPay.toLocaleString()} Net Pay
         </Badge>
       </Flex>
@@ -80,7 +86,7 @@ const PayslipCard = React.forwardRef<HTMLDivElement, { payslip: PayslipData }>((
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
         <Box>
-          <Text fontWeight="bold" color="gray.600" mb={2}>Earnings</Text>
+          <Text fontWeight="bold" color="teal.500" mb={2}>Earnings</Text>
           <Table size="sm">
             <Tbody>
               <Tr><Td>Basic</Td><Td isNumeric>₹{payslip.basic.toLocaleString()}</Td></Tr>
@@ -93,11 +99,11 @@ const PayslipCard = React.forwardRef<HTMLDivElement, { payslip: PayslipData }>((
         </Box>
 
         <Box>
-          <Text fontWeight="bold" color="gray.600" mb={2}>Deductions</Text>
+          <Text fontWeight="bold" color="teal.500" mb={2}>Deductions</Text>
           <Table size="sm">
             <Tbody>
               <Tr><Td>PF & Tax</Td><Td isNumeric>₹{payslip.deductions.toLocaleString()}</Td></Tr>
-              <Tr fontWeight="bold" color="green.700"><Td>Net Pay</Td><Td isNumeric>₹{netPay.toLocaleString()}</Td></Tr>
+              <Tr fontWeight="bold" color="teal.700"><Td>Net Pay</Td><Td isNumeric>₹{netPay.toLocaleString()}</Td></Tr>
             </Tbody>
           </Table>
         </Box>
@@ -112,12 +118,12 @@ const Payslipemp: React.FC = () => {
   const [startMonth, setStartMonth] = useState(payslips[0].month);
   const [endMonth, setEndMonth] = useState(payslips[0].month);
   const printRef = useRef<HTMLDivElement>(null);
-  
+
   const startIndex = payslipList.findIndex(p => p.month === startMonth);
   const endIndex = payslipList.findIndex(p => p.month === endMonth);
   const isRangeValid = startIndex !== -1 && endIndex !== -1 && startIndex <= endIndex;
   const selectedPayslips = isRangeValid ? payslipList.slice(startIndex, endIndex + 1) : [];
-   
+
   const router = useRouter();
   const rawUsername = router.query.username;
   const username = Array.isArray(rawUsername) ? rawUsername[0] : rawUsername || 'User';
@@ -127,17 +133,26 @@ const Payslipemp: React.FC = () => {
     documentTitle: `Payslip_${startMonth.replace(' ', '_')}${startMonth !== endMonth ? `_to_${endMonth.replace(' ', '_')}` : ''}`,
   });
 
+  const { colorMode, toggleColorMode } = useColorMode();
+  const boxBg = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('teal.600', 'teal.300');
+
   return (
     <Box maxW="1000px" mx="auto" p={6}>
       <Flex justify="space-between" align="center" mb={10} wrap="wrap">
         <Box>
-          <Heading size="lg" color="teal.600">Employee Payslip Portal</Heading>
-          <Text color="teal.600" fontSize="md" mt={2}>{username} ({username}12345)</Text>
+          <Heading size="lg" color={textColor}>Employee Payslip Portal</Heading>
+          <Text color={textColor} fontSize="md" mt={2}>{username} ({username}12345)</Text>
         </Box>
+        <IconButton
+          aria-label="Toggle dark mode"
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          onClick={toggleColorMode}
+        />
       </Flex>
 
       <Box
-        bg="white"
+        bg={boxBg}
         p={6}
         borderRadius="lg"
         boxShadow="lg"
@@ -163,7 +178,7 @@ const Payslipemp: React.FC = () => {
 
           <Box display="flex" alignItems="flex-end">
             <Button
-              colorScheme="blue"
+              colorScheme="teal"
               w="full"
               onClick={handlePrint}
               leftIcon={<DownloadIcon />}
@@ -175,7 +190,6 @@ const Payslipemp: React.FC = () => {
         </SimpleGrid>
       </Box>
 
-  
       <Box
         ref={printRef}
         sx={{
@@ -192,7 +206,6 @@ const Payslipemp: React.FC = () => {
         ))}
       </Box>
 
-      
       <VStack spacing={8} align="stretch">
         {selectedPayslips.map(p => (
           <PayslipCard key={p.month} payslip={p} />

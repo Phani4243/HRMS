@@ -60,13 +60,21 @@ export default function UsersPage({ searchQuery }: { searchQuery: string }) {
       <Heading size="lg" color="teal.600">Users</Heading>
 
       <InputGroup maxW="400px">
-        <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
+        <InputLeftElement
+          pointerEvents="none"
+          children={<SearchIcon color="teal.600" />} // optional: red icon
+        />
         <Input
           placeholder="Search users by name or email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          borderColor="teal.600"          // default border color
+          focusBorderColor="teal.600"     // border color on focus
+          color="teal.600"                // input text color
+          _placeholder={{ color: "teal.600" }} // placeholder text color
         />
       </InputGroup>
+
 
       <Box
         w="100%"

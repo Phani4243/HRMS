@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
+  ChakraProvider,
   Box,
   Heading,
   Text,
@@ -35,8 +36,12 @@ import {
   Checkbox,
   CheckboxGroup,
   Stack,
+  useColorMode,
+  IconButton,
+  extendTheme,
+  ColorModeScript,
 } from "@chakra-ui/react";
-import { FiCalendar, FiCheckCircle, FiClock, FiSearch } from "react-icons/fi";
+import { FiCalendar, FiCheckCircle, FiClock, FiSearch, FiMoon, FiSun } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -66,6 +71,7 @@ interface FormData {
   sendTo: string[];
 
 }
+
 
 const schema = yup.object({
   leaveType: yup.string().required("Please select leave type"),

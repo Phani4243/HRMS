@@ -36,6 +36,7 @@ import {
   FiClock,
 } from 'react-icons/fi';
 import { useRouter } from 'next/router';
+import { DarkModeSwitch } from '../components/DarkModeSwitch';
 import Dashboardemp from './Dashboardemp';
 import Usersemp from './Usersemp';
 import Leaveemployee from './Leaveemployee';
@@ -73,25 +74,16 @@ export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
 
-
   const bg = useColorModeValue('gray.50', 'gray.800');
   const sidebarBg = useColorModeValue('white', 'gray.800');
   const router = useRouter();
   const rawUsername = router.query.username;
   const username = Array.isArray(rawUsername) ? rawUsername[0] : rawUsername || 'User';
 
-  const handleClick = () => {
-    setActiveTab('messages');
-  };
-  const handleGoToSettings = () => {
-    setActiveTab('settings');
-  };
-  const handleGoToProfile = () => {
-    setActiveTab('profile');
-  };
-  const handleLogout = () => {
-    router.push('/');
-  };
+  const handleClick = () => setActiveTab('messages');
+  const handleGoToSettings = () => setActiveTab('settings');
+  const handleGoToProfile = () => setActiveTab('profile');
+  const handleLogout = () => router.push('/');
 
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'New leave request pending approval.', time: '2m ago', read: false },
@@ -101,43 +93,28 @@ export default function DashboardLayout() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard':
-        return <Dashboardemp searchQuery={searchQuery} />;
-      case 'users':
-        return <Usersemp searchQuery={searchQuery} />;
-      case 'payslip':
-        return <Payslipemp />;
-      case 'leave':
-        return <Leaveemployee />;
-      case 'calendar':
-        return <Calenderemp />;
-      case 'checklist':
-        return <Checklistemp />;
-      case 'parking':
-        return <Parkingemp />;
-      case 'recruit':
-        return <Recruitemp />;
-      case 'messages':
-        return <Messagesemp />;
-      case 'settings':
-        return <Settingsemp />;
-      case 'profile':
-        return <Profileemp />;
-      case 'bookings':
-        return <Text>Here are your Bookings.</Text>;
-      case 'newsrooms':
-        return <Text>Newsrooms content goes here.</Text>;
-      case 'documents':
-        return <Text>Your Documents will appear here.</Text>;
-      default:
-        return <Text>Select a menu item.</Text>;
+      case 'dashboard': return <Dashboardemp searchQuery={searchQuery} />;
+      case 'users': return <Usersemp searchQuery={searchQuery} />;
+      case 'payslip': return <Payslipemp />;
+      case 'leave': return <Leaveemployee />;
+      case 'calendar': return <Calenderemp />;
+      case 'checklist': return <Checklistemp />;
+      case 'parking': return <Parkingemp />;
+      case 'recruit': return <Recruitemp />;
+      case 'messages': return <Messagesemp />;
+      case 'settings': return <Settingsemp />;
+      case 'profile': return <Profileemp />;
+      case 'bookings': return <Text>Here are your Bookings.</Text>;
+      case 'newsrooms': return <Text>Newsrooms content goes here.</Text>;
+      case 'documents': return <Text>Your Documents will appear here.</Text>;
+      default: return <Text>Select a menu item.</Text>;
     }
   };
 
   return (
     <ChakraProvider>
       <Flex direction="column" height="100vh" bg={bg}>
-        {/* Header with fixed teal background */}
+        {/* Header */}
         <Flex
           height="60px"
           bg="teal.500"
@@ -161,6 +138,7 @@ export default function DashboardLayout() {
               display={{ base: 'inline-flex', md: 'none' }}
               mr={4}
               color="white"
+             
             />
             <MenuList>
               {navItems.map((item) => (
@@ -171,9 +149,7 @@ export default function DashboardLayout() {
             </MenuList>
           </Menu>
 
-          <Text fontWeight="bold" fontSize="xl" cursor="pointer" color="white">
-            AVLR
-          </Text>
+          <Text fontWeight="bold" fontSize="xl" cursor="pointer">AVLR</Text>
 
           <HStack
             spacing={6}
@@ -186,7 +162,7 @@ export default function DashboardLayout() {
               <Button
                 key={item.key}
                 variant={activeTab === item.key ? 'solid' : 'ghost'}
-                colorScheme={activeTab === item.key ? 'blue' : 'whiteAlpha'}
+                colorScheme={activeTab === item.key ? 'blue' : 'black'}
                 onClick={() => setActiveTab(item.key)}
                 size="sm"
               >
@@ -195,7 +171,7 @@ export default function DashboardLayout() {
             ))}
           </HStack>
 
-          <HStack spacing={4} ml="auto" color="white">
+          <HStack spacing={4} ml="auto">
             <Box maxW="200px" position="relative">
               <Input
                 placeholder="Search..."
@@ -203,14 +179,12 @@ export default function DashboardLayout() {
                 bg="teal.600"
                 borderRadius="md"
                 pl={8}
-
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 _placeholder={{ color: 'teal.200' }}
                 color="white"
                 border="none"
                 _focus={{ bg: 'teal.700' }}
-
               />
               <Box
                 position="absolute"
@@ -223,6 +197,8 @@ export default function DashboardLayout() {
                 <FiSearch />
               </Box>
             </Box>
+
+            <DarkModeSwitch />
 
             <Menu>
               <Tooltip label="Notifications" hasArrow>
@@ -251,26 +227,18 @@ export default function DashboardLayout() {
               </Tooltip>
               <MenuList maxW="300px">
                 {notifications.length === 0 ? (
-                  <Text px={4} py={2}>
-                    No new notifications
-                  </Text>
+                  <Text px={4} py={2}>No new notifications</Text>
                 ) : (
                   notifications.map((note) => (
                     <MenuItem key={note.id} whiteSpace="normal">
                       <Box>
                         <Text fontWeight={note.read ? 'normal' : 'bold'}>{note.message}</Text>
-                        <Text fontSize="xs" color="gray.500">
-                          {note.time}
-                        </Text>
+                        <Text fontSize="xs" color="gray.500">{note.time}</Text>
                       </Box>
                     </MenuItem>
                   ))
                 )}
-                <MenuItem
-                  onClick={() =>
-                    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-                  }
-                >
+                <MenuItem onClick={() => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))}>
                   Mark all as read
                 </MenuItem>
               </MenuList>
@@ -295,32 +263,19 @@ export default function DashboardLayout() {
                   <FiChevronDown />
                 </HStack>
               </MenuButton>
-              <MenuList
-                bg={useColorModeValue('white', 'red.800')}
-                color={useColorModeValue('gray.800', 'white')}
-                border="1px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
-                boxShadow="lg"
-              >
-                <MenuItem _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }} onClick={handleGoToProfile}>
-                  Profile
-                </MenuItem>
-                <MenuItem _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }} onClick={handleGoToSettings}>
-                  Settings
-                </MenuItem>
-                <MenuItem _hover={{ bg: useColorModeValue('gray.100', 'gray.700') }} onClick={handleLogout}>
-                  Logout
-                </MenuItem>
+              <MenuList>
+                <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
+                <MenuItem onClick={handleGoToSettings}>Settings</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </MenuList>
             </Menu>
-
           </HStack>
         </Flex>
 
         {/* Sidebar */}
         <Flex flex="1" pt="60px" height="calc(100vh - 60px)">
           <VStack
-            bg={sidebarBg}
+            bg={"teal.500"}
             width="220px"
             p={4}
             spacing={2}
@@ -339,7 +294,7 @@ export default function DashboardLayout() {
                 leftIcon={<Icon />}
                 justifyContent="flex-start"
                 variant={activeTab === key ? 'solid' : 'ghost'}
-                colorScheme={activeTab === key ? 'blue' : 'gray'}
+                colorScheme={activeTab === key ? 'blue' : 'white'}
                 onClick={() => setActiveTab(key)}
                 size="md"
                 width="100%"
