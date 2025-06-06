@@ -35,7 +35,7 @@ const AttendanceRequest = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Text fontSize="22px" fontWeight="semibold">
+                    <Text fontSize="22px" color="blue.600" fontWeight="semibold">
                       Work From Home /On Duty Requests
                     </Text>
                     <Box

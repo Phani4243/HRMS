@@ -45,7 +45,7 @@ const WeeklyOffRequest = () => {
           <TableCaption>
             <Box
               display="flex"
-              justifyContent="end"
+              justifyContent="center"
               gap="1rem"
               p="1rem"
               alignItems="center"

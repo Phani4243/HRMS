@@ -38,7 +38,7 @@ const UserForm = () => {
           gap: "2rem",
         }}
       >
-        <Alert status="warning">
+        <Alert color="blue.600" status="warning">
           <AlertIcon />
           Seems your account is about expire, upgrade now
         </Alert>

@@ -24,7 +24,7 @@ const DocumentSidebar: React.FC<LayoutProps> = ({ children }) => {
         }}
       >
         <Box>
-          <Heading as="h3" size="lg">
+          <Heading color="blue.600" as="h3" size="lg">
             Employee Documents
           </Heading>
         </Box>
@@ -59,7 +59,7 @@ const DocumentSidebar: React.FC<LayoutProps> = ({ children }) => {
                       <Box
                         as="div"
                         key={index}
-                        bg={router.pathname === data.path ? "#e6fffa" : ""}
+                        bg={router.pathname === data.path ? "#2b6cb0" : ""}
                         sx={{
                           display: "flex",
                           justifyContent: "start",

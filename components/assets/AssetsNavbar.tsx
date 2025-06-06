@@ -1,58 +1,75 @@
 import React from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Card, Text, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  Text,
+  Link,
+  HStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { assetMenuList } from "./constants/assetData";
 
 const AssetsNavbar = ({ children }) => {
   const router = useRouter();
+
+  const activeBg = useColorModeValue("blue.100", "blue.700");
+  const activeColor = useColorModeValue("blue.600", "white");
+
   return (
     <>
-      <Box
-        as="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
-        }}
-      >
-        <Card w="full">
-          <Box
-            as="div"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "2rem",
-              h: "full",
-              justifyContent: "space-around",
-              overflowX: "auto", py: "5",
-              borderRadius: "md"
-            }}
+      <Box>
+        <Card
+          p={4}
+          borderRadius="md"
+          bg={useColorModeValue("gray.50", "gray.800")}
+          boxShadow="sm"
+        >
+          <HStack
+            justifyContent={"space-around"}
+            cursor="pointer"
+            overflowX="auto"
+            py={2}
           >
-            {assetMenuList.map((menuInfo: any, index: any) => (
-              <Link as={NextLink} href={menuInfo.menuPath} key={index}>
-                <Text
-                  fontWeight="semibold"
-                  color="#0096FF"
-                  padding="0.5rem"
-                  borderRadius="5px"
-                  bg={router.pathname === menuInfo.menuPath ? "#B6D0E2" : ""}
-                  _hover={{
-                    cursor: "pointer",
-                    bg: "#B6D0E2",
-                  }}
-                  sx={{
-                    transition: "2s ease-out 100ms",
-                  }}
+            {assetMenuList.map((menuInfo, index) => {
+              const isActive = router.pathname === menuInfo.menuPath;
+
+              return (
+                <Link
+                  key={index}
+                  as={NextLink}
+                  href={menuInfo.menuPath}
+                  _hover={{ textDecoration: "none" }}
                 >
-                  {menuInfo.menuTittle}
-                </Text>
-              </Link>
-            ))}
-          </Box>
+                  <Text
+                    px={4}
+                    py={2}
+                    borderRadius="md"
+                    fontWeight="medium"
+                    bg={isActive ? activeBg : "transparent"}
+                    color={
+                      isActive
+                        ? activeColor
+                        : useColorModeValue("gray.600", "gray.300")
+                    }
+                    _hover={{
+                      bg: useColorModeValue("gray.200", "gray.700"),
+                      color: activeColor,
+                    }}
+                    transition="all 0.2s"
+                    whiteSpace="nowrap"
+                  >
+                    {menuInfo.menuTittle}
+                  </Text>
+                </Link>
+              );
+            })}
+          </HStack>
         </Card>
       </Box>
-      <Box marginTop={7}> {children}</Box>
+
+      <Box mt={6}>{children}</Box>
     </>
   );
 };

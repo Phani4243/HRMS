@@ -42,14 +42,14 @@ const UserProfile = ({ children }) => {
         <Avatar size="2xl" name="Jhon James" src="https://bit.ly/dan-abramov" />
         <Stack spacing={2}>
           <Flex align="center" gap={3}>
-            <Text fontSize="2xl" fontWeight="bold">Jhon James</Text>
+            <Text fontSize="2xl" fontWeight="bold" color="blue.600">Jhon James</Text>
             <Badge colorScheme="red">Not in Yet</Badge>
           </Flex>
           <Flex align="center" gap={4} wrap="wrap">
-            <Flex align="center" gap={2}><SlLocationPin /><Text>Surat</Text></Flex>
-            <Flex align="center" gap={2}><CiMail /><Link color="blue.500" href="mailto:xyz@gmail.com">xyz@gmail.com</Link></Flex>
-            <Flex align="center" gap={2}><BsTelephone /><Link color="blue.500" href="tel:1234567890">1234567890</Link></Flex>
-            <Flex align="center" gap={2}><FaRegAddressCard /><Button variant="link" colorScheme="blue" onClick={onOpen}>ID Card</Button></Flex>
+            <Flex color="blue.600" align="center" gap={2}><SlLocationPin /><Text>Surat</Text></Flex>
+            <Flex align="center" gap={2}><CiMail color=" 2b6cb0#" /><Link color="blue.600" href="mailto:xyz@gmail.com">xyz@gmail.com</Link></Flex>
+            <Flex align="center" gap={2}><BsTelephone color=" #2b6cb0"/><Link color="blue.600" href="tel:1234567890">1234567890</Link></Flex>
+            <Flex align="center" gap={2}><FaRegAddressCard color=" #2b6cb0" /><Button variant="link" color="blue.600" onClick={onOpen}>ID Card</Button></Flex>
           </Flex>
         </Stack>
       </Flex>
@@ -59,16 +59,16 @@ const UserProfile = ({ children }) => {
       {/* Job Info */}
       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
         <Box>
-          <Text fontWeight="semibold">Job Title</Text>
-          <Text>Front-End Developer</Text>
+          <Text color="blue.600" fontWeight="semibold">Job Title</Text>
+          <Text color="blue.600">Front-End Developer</Text>
         </Box>
         <Box>
-          <Text fontWeight="semibold">Department</Text>
-          <Text>Web Deployment</Text>
+          <Text color="blue.600" fontWeight="semibold">Department</Text>
+          <Text color="blue.600">Web Deployment</Text>
         </Box>
         <Box>
-          <Text fontWeight="semibold">Reporting To</Text>
-          <Text>DK Raman</Text>
+          <Text color="blue.600" fontWeight="semibold">Reporting To</Text>
+          <Text color="blue.600">DK Raman</Text>
         </Box>
       </SimpleGrid>
 

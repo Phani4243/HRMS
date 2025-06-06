@@ -1,126 +1,69 @@
-import { Box, Card, Link, Text } from "@chakra-ui/react";
+import { Box, Card, Link, Text, HStack, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 
 const AttendanceNavbar = ({ children }) => {
   const router = useRouter();
+
+  const activeBg = useColorModeValue("blue.100", "blue.700");
+  const activeColor = useColorModeValue("blue.600", "white");
+  const inactiveColor = useColorModeValue("gray.600", "gray.300");
+  const hoverBg = useColorModeValue("gray.200", "gray.700");
+
+  const menuItems = [
+    { label: "Attendance Log", path: "/attendance" },
+    { label: "Shift Schedule", path: "/attendance/shift-schedule" },
+    { label: "Attendance Request", path: "/attendance/attendance-request" },
+    { label: "Overtime Request", path: "/attendance/overtime-request" },
+    { label: "Shift Weekly Off Request", path: "/attendance/shift-weeklyOff" },
+  ];
+
   return (
     <>
-      <Box
-        as="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
-          mt: "1%",
-        }}
+      <Card
+        p={4}
+        borderRadius="md"
+        bg={useColorModeValue("gray.50", "gray.800")}
+        boxShadow="sm"
       >
-        <Card w="full">
-          <Box
-            as="div"
-            sx={{
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "center",
-              gap: "2rem",
-              h: "full",
-            }}
-          >
-            <Link as={NextLink} href="/attendance">
-              <Text
-                fontWeight="semibold"
-                color="#0096FF"
-                padding="0.5rem"
-                bg={router.pathname === "/attendance" ? "#B6D0E2" : ""}
-                _hover={{
-                  cursor: "pointer",
-                  bg: "#B6D0E2",
-                }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
-              >
-                Attendance Log
-              </Text>
-            </Link>
+        <HStack justifyContent="space-around" spacing={4} overflowX="auto" flexWrap="wrap">
+          {menuItems.map(({ label, path }, index) => {
+            const isActive = router.pathname === path;
 
-            <Link as={NextLink} href="/attendance/shift-schedule">
-              <Text
-                fontWeight="semibold"
-                color="#0096FF"
-                padding="0.5rem"
-                bg={
-                  router.pathname === "/attendance/shift-schedule"
-                    ? "#B6D0E2"
-                    : ""
-                }
-                _hover={{
-                  cursor: "pointer",
-                  bg: "#B6D0E2",
-                }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
+            return (
+              <Link
+                key={index}
+                as={NextLink}
+                href={path}
+                _hover={{ textDecoration: "none" }}
               >
-                Shift Schedule
-              </Text>
-            </Link>
-            <Link as={NextLink} href="/attendance/attendance-request">
-              <Text
-                fontWeight="semibold"
-                color="#0096FF"
-                padding="0.5rem"
-                bg={router.pathname === "/attendance/attendance-request" ? "#B6D0E2" : ""}
-                _hover={{
-                  cursor: "pointer",
-                  bg: "#B6D0E2",
-                }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
-              >
-                Attendance Request
-              </Text>
-            </Link>
-            <Link as={NextLink} href="/attendance/overtime-request">
-              <Text
-                fontWeight="semibold"
-                color="#0096FF"
-                padding="0.5rem"
-                bg={router.pathname === "/attendance/overtime-request" ? "#B6D0E2" : ""}
-                _hover={{
-                  cursor: "pointer",
-                  bg: "#B6D0E2",
-                }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
-              >
-                Overtime Request
-              </Text>
-            </Link>
-            <Link as={NextLink} href="/attendance/shift-weeklyOff">
-              <Text
-                fontWeight="semibold"
-                color="#0096FF"
-                padding="0.5rem"
-                bg={router.pathname === "/attendance/shift-weeklyOff" ? "#B6D0E2" : ""}
-                _hover={{
-                  cursor: "pointer",
-                  bg: "#B6D0E2",
-                }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
-              >
-                Shift Weekly Off Request
-              </Text>
-            </Link>
-          </Box>
-        </Card>
+                <Text
+                  px={4}
+                  py={2}
+                  borderRadius="md"
+                  fontWeight="medium"
+                  bg={isActive ? activeBg : "transparent"}
+                  color={isActive ? activeColor : inactiveColor}
+                  _hover={{
+                    bg: hoverBg,
+                    color: activeColor,
+                    cursor: "pointer",
+                  }}
+                  transition="all 0.2s"
+                  whiteSpace="nowrap"
+                >
+                  {label}
+                </Text>
+              </Link>
+            );
+          })}
+        </HStack>
+      </Card>
+
+      <Box mt={6}>
+        {children}
       </Box>
-      <Box mt="2%">{children}</Box>
     </>
   );
 };

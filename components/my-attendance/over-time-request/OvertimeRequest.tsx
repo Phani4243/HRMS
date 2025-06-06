@@ -43,12 +43,15 @@ const OvertimeRequest = () => {
               gap: "0.5rem",
             }}
           >
-            <Text fontWeight="semibold" fontSize="22px">
+            <Text color="blue.600" fontWeight="semibold" fontSize="22px">
               Overtime Requests
             </Text>
-            <CiCircleAlert fontSize="28px" />
+            <CiCircleAlert color=" #2b6cb0" fontSize="28px" />
           </Box>
           <Button
+          border="2px solid"
+          color="blue.600"
+            _hover={{ bg: "blue.50" }}
             colorScheme="twitter"
             onClick={() => {
               onOpen();

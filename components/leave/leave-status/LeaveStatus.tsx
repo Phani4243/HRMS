@@ -7,7 +7,7 @@ import ConsumendLeave from "./consumend-leave/ConsumendLeave";
 const LeaveStatus = () => {
   return (
     <>
-      <Text fontWeight="semibold" fontSize="2xl">
+      <Text fontWeight="semibold" color="blue.600"  fontSize="2xl">
         My Leave Status
       </Text>
       <Grid templateColumns="33% 33% 33%" gap={6} p="2rem">

@@ -1,86 +1,52 @@
-import { Box, Card, Text } from "@chakra-ui/react";
+import { Box, Card, Link, Text, HStack, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 import { leaveMenubar } from "../constants/leaveList";
+
 const LeaveMenuBar = ({ children }) => {
   const router = useRouter();
 
-  const handleRoute = (path: any) => {
-    router.push(path);
-  };
+  const activeBg = useColorModeValue("blue.100", "blue.700");
+  const activeColor = useColorModeValue("blue.600", "white");
+
   return (
     <>
-      <Card>
-        <Box
-          as="div"
-          sx={{
-            display: "flex",
-            paddingLeft: "0.5rem",
-            justifyContent: "start",
-            flexWrap: "wrap",
-            alignItems: "center",
-            gap: "2rem",
+      <Card p={4} borderRadius="md" bg={useColorModeValue("gray.50", "gray.800")} boxShadow="sm">
+        <HStack justifyContent="space-around" spacing={4} overflowX="auto" flexWrap="wrap">
+          {leaveMenubar.map((data, index) => {
+            const isActive = router.pathname === data.path;
 
-            fontWeight: "semibold",
-            transition: "2s ease-out 100ms",
-            paddingStart: "0.5rem",
-            "@media (max-width: 1024px)": {
-              gap: "1rem",
-            },
-            "@media (max-width: 768px)": {
-              gap: "0.2rem",
-            },
-          }}
-        >
-          {leaveMenubar.map((data: any, index: any) => (
-            <Box
-              key={index}
-              as="button"
-              position="relative"
-              onClick={() => {
-                handleRoute(data.path);
-              }}
-            >
-              <Text
-                fontWeight="semibold"
-                padding="0.5rem"
-                color="#0096FF"
-                position="relative"
-                _hover={{
-                  cursor: "pointer",
-                }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
+            return (
+              <Link
+                key={index}
+                as={NextLink}
+                href={data.path}
+                _hover={{ textDecoration: "none" }}
               >
-                {data.menuTittle}
-              </Text>
-
-              <Box
-                sx={{
-                  display: router.pathname.includes(data.path)
-                    ? "block"
-                    : "none",
-                  content: '""',
-                  position: "absolute",
-                  bottom: 0,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  borderLeft: "8px solid transparent",
-                  borderRight: "8px solid transparent",
-                  borderBottom: "8px solid #0096FF",
-                }}
-              ></Box>
-            </Box>
-          ))}
-        </Box>
+                <Text
+                  px={4}
+                  py={2}
+                  borderRadius="md"
+                  fontWeight="medium"
+                  bg={isActive ? activeBg : "transparent"}
+                  color={isActive ? activeColor : useColorModeValue("gray.600", "gray.300")}
+                  _hover={{
+                    bg: useColorModeValue("gray.200", "gray.700"),
+                    color: activeColor,
+                  }}
+                  transition="all 0.2s"
+                  whiteSpace="nowrap"
+                >
+                  {data.menuTittle}
+                </Text>
+              </Link>
+            );
+          })}
+        </HStack>
       </Card>
 
-      <Box
-        sx={{
-          marginTop: "0.5rem",
-        }}
-      >
+      <Box mt={6}>
         {children}
       </Box>
     </>

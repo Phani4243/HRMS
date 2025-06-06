@@ -7,14 +7,14 @@ import AttendanceAction from "./attendance-action/AttendanceAction";
 const AttendanceBoxes = () => {
   return (
     <>
-      <Grid templateColumns="30% 35% auto" gap={4} mt={8}>
+      <Grid templateColumns="30% 35% auto" gap={4} mt={3}>
         <GridItem>
           <AttendanceStats />
         </GridItem>
         <GridItem>
-          <AttendanceTimeing />
+          <AttendanceTimeing  />
         </GridItem>
-        <GridItem>
+        <GridItem marginTop="15px">
           <AttendanceAction />
         </GridItem>
       </Grid>

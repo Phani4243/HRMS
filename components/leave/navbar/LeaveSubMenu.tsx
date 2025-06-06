@@ -2,9 +2,13 @@ import { Box, Card, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
+import { useColorModeValue } from "@chakra-ui/react";
 
 const LeaveSubMenu = ({ children }) => {
   const router = useRouter();
+  const isActive = router.pathname === "/leaves";
+  const activeBg = useColorModeValue("blue.100", "blue.700");
+  const activeColor = useColorModeValue("blue.600", "white");
   return (
     <>
       <Box
@@ -20,27 +24,29 @@ const LeaveSubMenu = ({ children }) => {
             as="div"
             sx={{
               display: "flex",
-              justifyContent: "start",
+              justifyContent: "center",
               alignItems: "center",
               gap: "2rem",
               h: "full",
+              padding:"20px"
             }}
           >
-            <Link as={NextLink} href="/leaves">
+            <Link as={NextLink} href="/leaves" _hover={{ textDecoration: "none" }}>
               <Text
-                fontWeight="semibold"
-                color="#0096FF"
-                padding="0.5rem"
-                bg={router.pathname === "/leaves" ? "#B6D0E2" : ""}
+                px={4}
+                py={2}
+                borderRadius="md"
+                fontWeight="medium"
+                bg={isActive ? activeBg : "transparent"}
+                color={isActive ? activeColor : useColorModeValue("gray.600", "gray.300")}
                 _hover={{
-                  cursor: "pointer",
-                  bg: "#B6D0E2",
+                  bg: useColorModeValue("gray.200", "gray.700"),
+                  color: activeColor,
                 }}
-                sx={{
-                  transition: "2s ease-out 100ms",
-                }}
+                transition="all 0.2s"
+                whiteSpace="nowrap"
               >
-                Summary{" "}
+                Summary
               </Text>
             </Link>
           </Box>

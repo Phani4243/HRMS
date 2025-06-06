@@ -118,7 +118,8 @@ const ShiftSchedule = () => {
                 onClick={handleNextClick}
               />
             </Box>
-            <Button colorScheme="twitter" variant="outline" onClick={onOpen}>
+            <Button onClick={onOpen}
+              color="blue.600" border="2px solid" variant="outline" _hover={{ bg: "blue.50" }}>
               Request Weekly Off
             </Button>
           </Box>

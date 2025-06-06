@@ -26,7 +26,7 @@ const About = ({ children }) => {
           bg={useColorModeValue("gray.50", "gray.800")}
           boxShadow="sm"
         >
-          <HStack justifyContent={"space-around"} overflowX="auto" py={2}>
+          <HStack justifyContent={"space-around"} cursor="pointer" overflowX="auto" py={2}>
             {aboutSubmenuList.map((data, index) => {
               const isActive = router.pathname === data.path;
 
@@ -60,7 +60,7 @@ const About = ({ children }) => {
         </Card>
       </Box>
 
-      <Box  mt={6}>
+      <Box mt={6}>
         {children}
       </Box>
     </>

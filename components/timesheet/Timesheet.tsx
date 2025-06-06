@@ -44,16 +44,21 @@ const Timesheet = () => {
               gap: "0.5rem",
             }}
           >
-            <Text fontWeight="semibold" fontSize="22px">
+            <Text fontWeight="semibold" color="blue.600" fontSize="22px">
               Timesheet Logs
             </Text>
-            <CiCircleAlert fontSize="28px" />
+            <CiCircleAlert color=" #2b6cb0" fontSize="28px" />
           </Box>
           <Button
-            colorScheme="twitter"
+            variant="ghost"
+            colorScheme="blue"
+          color="blue.600"
+            border="2px solid"
+            
             onClick={() => {
               onOpen();
             }}
+            _hover={{ bg: "blue.50" }}
           >
             Add Timesheet
           </Button>

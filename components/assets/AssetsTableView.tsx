@@ -64,10 +64,10 @@ const AssetsTableView = () => {
         }}
       >
         <Box>
-          <Text fontSize="2xl" fontWeight="semibold">
+          <Text color="blue.600" fontSize="2xl" fontWeight="semibold">
             Assigned Assets
           </Text>
-          <Text fontWeight="">Assets that are currently assigned to you</Text>
+          <Text color="blue.600" fontWeight="">Assets that are currently assigned to you</Text>
         </Box>
         <TableContainer bg="bgCard" rounded="1rem">
           <Table variant="simple">
