@@ -130,7 +130,7 @@ const Dashboardemp: React.FC<DashboardempProps> = ({ searchQuery }) => {
   });
 
   return (
-    <VStack maxW="1000px" spacing={8} align="stretch" p={6} bg={bgPage} minH="100vh">
+    <VStack maxW="1000px" spacing={8} align="stretch" p={6} bg={bgPage} borderRadius="10px" minH="100vh">
       {/* Stat Cards */}
       <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
 

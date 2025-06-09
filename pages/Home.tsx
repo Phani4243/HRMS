@@ -85,6 +85,11 @@ export default function DashboardLayout() {
   const handleGoToProfile = () => setActiveTab('profile');
   const handleLogout = () => router.push('/');
 
+  const bgColor = useColorModeValue('white', 'gray.700');       // Menu background
+  const color = useColorModeValue('black', 'white');            // Text color
+  const hoverBg = useColorModeValue('gray.100', 'gray.600');    // Hover background for items
+
+
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'New leave request pending approval.', time: '2m ago', read: false },
     { id: 2, message: 'Payslip for May is now available.', time: '1h ago', read: false },
@@ -152,7 +157,7 @@ export default function DashboardLayout() {
           <Text fontWeight="bold" fontSize="xl" cursor="pointer">AVLR</Text>
 
           <HStack
-            spacing={6}
+            spacing={2}  // closer spacing like sidebar
             flex="1"
             justify="center"
             maxW="600px"
@@ -162,9 +167,12 @@ export default function DashboardLayout() {
               <Button
                 key={item.key}
                 variant={activeTab === item.key ? 'solid' : 'ghost'}
-                colorScheme={activeTab === item.key ? 'blue' : 'black'}
+                colorScheme={activeTab === item.key ? 'blue' : 'teal'} // sidebar uses teal background, so teal instead of black
                 onClick={() => setActiveTab(item.key)}
-                size="sm"
+                size="md"  // same size as sidebar (sidebar uses md)
+                justifyContent="flex-start"  // align icon + label left if you have icons here
+                minWidth="120px"  // maintain a bit of width for consistent button size
+                borderRadius="md"
               >
                 {item.label}
               </Button>
@@ -263,10 +271,16 @@ export default function DashboardLayout() {
                   <FiChevronDown />
                 </HStack>
               </MenuButton>
-              <MenuList>
-                <MenuItem onClick={handleGoToProfile}>Profile</MenuItem>
-                <MenuItem onClick={handleGoToSettings}>Settings</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuList bg={bgColor} color={color}>
+                <MenuItem _hover={{ bg: hoverBg }} onClick={handleGoToProfile}>
+                  Profile
+                </MenuItem>
+                <MenuItem _hover={{ bg: hoverBg }} onClick={handleGoToSettings}>
+                  Settings
+                </MenuItem>
+                <MenuItem _hover={{ bg: hoverBg }} onClick={handleLogout}>
+                  Logout
+                </MenuItem>
               </MenuList>
             </Menu>
           </HStack>

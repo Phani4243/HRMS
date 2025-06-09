@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Heading,
@@ -15,6 +15,7 @@ import {
   Divider,
   Stack,
   useToast,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
@@ -53,6 +54,12 @@ export default function Settingsemp({
   const [passwords, setPasswords] = useState({ current: '', new: '', confirm: '' });
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+
+  // Color mode values
+  const bg = useColorModeValue('gray.50', 'gray.700');
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const headingColor = useColorModeValue('teal.600', 'teal.300');
+  const textSecondary = useColorModeValue('gray.600', 'gray.300');
 
   const handlePasswordChange = () => {
     setPasswordError('');
@@ -96,15 +103,15 @@ export default function Settingsemp({
   };
 
   return (
-    <Box maxW="1000px" mx="auto" p={6}>
-      <Heading size="lg" color="teal.600" mb={6} textAlign="center">
+    <Box maxW="1000px" mx="auto" p={6} bg={bg} borderRadius="10px" minH="100vh">
+      <Heading size="lg" color={headingColor} mb={6} textAlign="center">
         Account Settings
       </Heading>
 
       <VStack spacing={8} align="stretch">
-
-        <Box bg="gray.50"  p={6} rounded="md" boxShadow="md">
-          <Heading color="teal.600" fontSize="xl" mb={4}>
+        {/* Profile Section */}
+        <Box bg={cardBg} p={6} rounded="md" boxShadow="md">
+          <Heading color={headingColor} fontSize="xl" mb={4}>
             Profile Information
           </Heading>
           <Stack spacing={4}>
@@ -135,9 +142,9 @@ export default function Settingsemp({
           </Stack>
         </Box>
 
-
-        <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading color="teal.600" fontSize="xl" mb={4}>
+        {/* Password Section */}
+        <Box bg={cardBg} p={6} rounded="md" boxShadow="md">
+          <Heading color={headingColor} fontSize="xl" mb={4}>
             Change Password
           </Heading>
           <Stack spacing={4}>
@@ -172,7 +179,7 @@ export default function Settingsemp({
             </FormControl>
 
             {passwordError && <Text color="red.500">{passwordError}</Text>}
-            {passwordSuccess && <Text color="green.500">{passwordSuccess}</Text>}
+            {passwordSuccess && <Text color="green.400">{passwordSuccess}</Text>}
 
             <Button onClick={handlePasswordChange} colorScheme="blue" alignSelf="flex-start">
               Update Password
@@ -180,8 +187,9 @@ export default function Settingsemp({
           </Stack>
         </Box>
 
-        <Box bg="gray.50" p={6} rounded="md" boxShadow="md">
-          <Heading color="teal.600" fontSize="xl" mb={4}>
+        {/* Notifications Section */}
+        <Box bg={cardBg} p={6} rounded="md" boxShadow="md">
+          <Heading color={headingColor} fontSize="xl" mb={4}>
             Notifications
           </Heading>
           <Stack spacing={4}>
@@ -213,7 +221,7 @@ export default function Settingsemp({
           </Stack>
         </Box>
 
-
+        {/* Save Button */}
         <Button colorScheme="green" size="lg" alignSelf="flex-end" onClick={handleSave}>
           Save All Settings
         </Button>

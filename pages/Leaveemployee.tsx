@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
 import {
-  ChakraProvider,
   Box,
   Heading,
   Text,
@@ -36,17 +35,15 @@ import {
   Checkbox,
   CheckboxGroup,
   Stack,
-  useColorMode,
-  IconButton,
-  extendTheme,
-  ColorModeScript,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { FiCalendar, FiCheckCircle, FiClock, FiSearch, FiMoon, FiSun } from "react-icons/fi";
+import { FiCalendar, FiCheckCircle, FiClock, FiSearch } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { DarkModeSwitch } from "../components/DarkModeSwitch"; // adjust path if needed
 
 type LeaveStatus = "Approved" | "Pending" | "Rejected";
 
@@ -57,9 +54,7 @@ interface LeaveRecord {
   to: Date;
   status: LeaveStatus;
   appliedOn: Date;
-
   sendTo: string[];
-
 }
 
 interface FormData {
@@ -67,11 +62,8 @@ interface FormData {
   fromDate: Date | null;
   toDate: Date | null;
   reason: string;
-
   sendTo: string[];
-
 }
-
 
 const schema = yup.object({
   leaveType: yup.string().required("Please select leave type"),
@@ -86,9 +78,11 @@ const schema = yup.object({
     .trim()
     .min(10, "Reason must be at least 10 characters")
     .required("Please enter reason"),
-
-  sendTo: yup.array().of(yup.string()).min(1, "please select atleast one recipient").required("please select at least one recipient"),
-
+  sendTo: yup
+    .array()
+    .of(yup.string())
+    .min(1, "Please select at least one recipient")
+    .required("Please select at least one recipient"),
 });
 
 const PAGE_SIZE = 5;
@@ -98,11 +92,9 @@ const Leaveemployee: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistory, setShowHistory] = useState(true);
   const toast = useToast();
-
   const [sortBy, setSortBy] = useState<keyof LeaveRecord | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formDataToSubmit, setFormDataToSubmit] = useState<FormData | null>(null);
 
@@ -120,11 +112,15 @@ const Leaveemployee: React.FC = () => {
       reason: "",
       sendTo: [],
     },
-    resolver: yupResolver(schema) as any,
+    resolver: yupResolver(schema),
   });
 
   const watchFromDate = watch("fromDate");
   const watchToDate = watch("toDate");
+
+  const boxBg = useColorModeValue("white", "gray.800");
+  const pageBg = useColorModeValue("gray.50", "gray.900");
+  const headingColor = useColorModeValue("teal.600", "teal.300");
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     setFormDataToSubmit(data);
@@ -133,11 +129,8 @@ const Leaveemployee: React.FC = () => {
 
   const handleRealSubmit = async (data: FormData) => {
     try {
-
-
       await new Promise((res) => setTimeout(res, 700));
 
-      
       const newLeave: LeaveRecord = {
         id: Date.now(),
         type: data.leaveType,
@@ -152,12 +145,9 @@ const Leaveemployee: React.FC = () => {
       reset();
       setCurrentPage(1);
 
-
       toast({
         title: "Leave request submitted!",
-        description: `Sent to: ${newLeave.sendTo.length > 0 ? newLeave.sendTo.join(", ") : "No one"
-          }`,
-
+        description: `Sent to: ${newLeave.sendTo.length > 0 ? newLeave.sendTo.join(", ") : "No one"}`,
         status: "success",
         duration: 4000,
         isClosable: true,
@@ -174,10 +164,9 @@ const Leaveemployee: React.FC = () => {
   };
 
   const filteredHistory = useMemo(
-    () =>
-      leaveHistory.filter((record) =>
-        record.type.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
+    () => leaveHistory.filter((record) =>
+      record.type.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
     [leaveHistory, searchTerm]
   );
 
@@ -228,52 +217,21 @@ const Leaveemployee: React.FC = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <Box maxW="1000px" mx="auto" py={8} px={4} bg="gray.50" minH="100vh">
-      <Heading textAlign="center" mb={8} color="teal.600">
-        Employee Leave Dashboard
-      </Heading>
+    <Box maxW="1000px" mx="auto" py={8} px={4} bg={pageBg} borderRadius="10px" minH="100vh">
+      <HStack justify="space-between" mb={8}>
+        <Heading textAlign="left" color={headingColor}>
+          Employee Leave Dashboard
+        </Heading>
+      </HStack>
 
       <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={4} mb={8}>
-        <SummaryCard
-          icon={FiCalendar}
-          label="Annual Leave"
-          value={12}
-          max={20}
-
-          gradient="linear(to-r, teal.400, green.400)"
-
-        />
-        <SummaryCard
-          icon={FiClock}
-          label="Sick Leave"
-          value={8}
-          max={10}
-
-          gradient="linear(to-r, yellow.400, orange.300)"
-
-        />
-        <SummaryCard
-          icon={FiCalendar}
-          label="Casual Leave"
-          value={5}
-          max={10}
-
-          gradient="linear(to-r, blue.400, cyan.400)"
-
-        />
-        <SummaryCard
-          icon={FiCheckCircle}
-          label="Used This Year"
-          value={10}
-          max={40}
-
-          gradient="linear(to-r, purple.500, pink.400)"
-
-        />
+        <SummaryCard icon={FiCalendar} label="Annual Leave" value={12} max={20} gradient="linear(to-r, teal.400, green.400)" />
+        <SummaryCard icon={FiClock} label="Sick Leave" value={8} max={10} gradient="linear(to-r, yellow.400, orange.300)" />
+        <SummaryCard icon={FiCalendar} label="Casual Leave" value={5} max={10} gradient="linear(to-r, blue.400, cyan.400)" />
+        <SummaryCard icon={FiCheckCircle} label="Used This Year" value={10} max={40} gradient="linear(to-r, purple.500, pink.400)" />
       </SimpleGrid>
 
-      <Box bg="white" p={6} rounded="md" shadow="md" mb={8}>
-
+      <Box bg={boxBg} p={6} rounded="md" shadow="md" mb={8}>
         <Heading size="md" mb={4} color="teal.600">
 
           Apply for Leave
@@ -361,7 +319,7 @@ const Leaveemployee: React.FC = () => {
             </FormControl>
 
 
-            <FormControl  pt={2} alignItems="flex-start" isInvalid={!!errors.sendTo}>
+            <FormControl pt={2} alignItems="flex-start" isInvalid={!!errors.sendTo}>
 
               <FormLabel>Send Request To (Optional)</FormLabel>
               <Controller
@@ -393,22 +351,23 @@ const Leaveemployee: React.FC = () => {
               isLoading={isSubmitting}
               loadingText="Submitting"
               w="full"
-              
+
             >
               Submit Request
             </Button>
           </VStack>
         </form>
+
       </Box>
 
-      <Box bg="white" p={6} rounded="md" shadow="md">
+      <Box bg={boxBg} p={6} rounded="md" shadow="md">
         <HStack justify="space-between" mb={4}>
 
           <Heading size="md" color="teal.600">
 
             Leave History
           </Heading>
-          <Button size="sm" onClick={() => setShowHistory(!showHistory)}>
+          <Button colorScheme="blue" size="sm" onClick={() => setShowHistory(!showHistory)}>
             {showHistory ? "Hide" : "Show"} History
           </Button>
         </HStack>
@@ -441,7 +400,7 @@ const Leaveemployee: React.FC = () => {
                 <Th cursor="pointer" onClick={() => toggleSort("appliedOn")}>
                   Applied On{renderSortIcon("appliedOn")}
                 </Th>
-               n <Th>Sent To</Th>
+                <Th>Sent To</Th>
 
               </Tr>
             </Thead>
@@ -502,8 +461,8 @@ const Leaveemployee: React.FC = () => {
             </Button>
           </HStack>
         </Collapse>
-      </Box>
 
+      </Box>
 
       {/* Confirmation Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} isCentered>
@@ -566,6 +525,8 @@ const Leaveemployee: React.FC = () => {
   );
 };
 
+
+
 interface SummaryCardProps {
   icon: React.ComponentType;
   label: string;
@@ -579,7 +540,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   label,
   value,
   max,
-
   gradient,
 }) => {
   const percentage = (value / max) * 100;
@@ -615,7 +575,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
           },
         }}
       />
-
     </Box>
   );
 };

@@ -116,7 +116,7 @@ const Checklistemp: React.FC = () => {
           }}
         />
         <Button
-          colorScheme="cyan" // Add Task button color scheme changed to cyan
+          colorScheme="blue" // Add Task button color scheme changed to cyan
           onClick={addTask}
           disabled={!newTask.trim()}
           leftIcon={<AddIcon />}
