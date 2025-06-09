@@ -3,7 +3,6 @@ import { FiAlertCircle, FiClock } from "react-icons/fi";
 import {
   Box,
   Button,
-  Card,
   Text,
   useDisclosure,
   Modal,
@@ -17,6 +16,8 @@ import {
   Tooltip,
   IconButton,
   Center,
+  useColorModeValue,
+  Card,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
@@ -82,10 +83,17 @@ const AttendanceAction = () => {
   const handleWebClockIn = () => setWebClockIn(true);
   const handleWebClockOut = () => setWebClockIn(false);
 
+  // Color modes
+  const cardBg = useColorModeValue("white", "gray.700");
+  const textColor = useColorModeValue("gray.800", "white");
+  const secondaryText = useColorModeValue("gray.600", "gray.400");
+  const borderColor = useColorModeValue("gray.300", "gray.600");
+  const timeColor = useColorModeValue("blue.600", "blue.300");
+
   return (
     <>
       <Box display="flex" flexDirection="column" gap={4}>
-        <Text fontWeight="semibold" color="blue.600" fontSize="2xl">
+        <Text color="blue.600" fontWeight="semibold"  fontSize="2xl">
           Action
         </Text>
 
@@ -93,7 +101,8 @@ const AttendanceAction = () => {
           p={6}
           borderRadius="md"
           boxShadow="md"
-          bg="white"
+          bg={cardBg}
+          color={textColor}
           position="relative"
           minH="330px"
         >
@@ -123,19 +132,19 @@ const AttendanceAction = () => {
                   <Box
                     p={3}
                     border="1px solid"
-                    borderColor="gray.300"
+                    borderColor={borderColor}
                     borderRadius="md"
                     textAlign="center"
                     fontWeight="semibold"
                     fontSize="lg"
                     minW="120px"
-                    color="blue.600"
+                    color={timeColor}
                   >
                     {currentDateTime.currentTime}
                   </Box>
                   <Text
                     fontWeight="normal"
-                    color="gray.600"
+                    color={secondaryText}
                     width="100%"
                     textAlign="center"
                   >
@@ -168,10 +177,10 @@ const AttendanceAction = () => {
                       Web Clock-Out
                     </Button>
                     <HStack spacing={2}>
-                      <Text fontWeight="bold" color="blue.600">
+                      <Text fontWeight="bold" color={timeColor}>
                         0h:0m
                       </Text>
-                      <Text color="gray.500">Since Last Login</Text>
+                      <Text color={secondaryText}>Since Last Login</Text>
                     </HStack>
                   </>
                 )}
@@ -180,7 +189,7 @@ const AttendanceAction = () => {
                   variant="ghost"
                   colorScheme="blue"
                   onClick={wfhDisclosure.onOpen}
-                  _hover={{ bg: "blue.50" }}
+                  _hover={{ bg: useColorModeValue("blue.50", "blue.900") }}
                   w="full"
                 >
                   Work From Home
@@ -189,7 +198,7 @@ const AttendanceAction = () => {
                   variant="ghost"
                   colorScheme="blue"
                   onClick={onOpen}
-                  _hover={{ bg: "blue.50" }}
+                  _hover={{ bg: useColorModeValue("blue.50", "blue.900") }}
                   w="full"
                 >
                   On Duty
@@ -198,7 +207,7 @@ const AttendanceAction = () => {
                   variant="ghost"
                   colorScheme="blue"
                   onClick={partialDayDisclosure.onOpen}
-                  _hover={{ bg: "blue.50" }}
+                  _hover={{ bg: useColorModeValue("blue.50", "blue.900") }}
                   w="full"
                 >
                   Partial Day
@@ -212,7 +221,7 @@ const AttendanceAction = () => {
       {/* On Duty Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="2xl" isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={cardBg} color={textColor}>
           <ModalHeader bg="gray.600" color="white">
             On Duty Request
           </ModalHeader>
@@ -231,7 +240,7 @@ const AttendanceAction = () => {
         isCentered
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={cardBg} color={textColor}>
           <ModalHeader bg="gray.600" color="white">
             Partial Day Request
           </ModalHeader>
@@ -250,7 +259,7 @@ const AttendanceAction = () => {
         isCentered
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={cardBg} color={textColor}>
           <ModalHeader bg="gray.600" color="white">
             Work From Home Request
           </ModalHeader>

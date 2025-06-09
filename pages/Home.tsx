@@ -233,7 +233,14 @@ export default function DashboardLayout() {
                   )}
                 </MenuButton>
               </Tooltip>
-              <MenuList maxW="300px">
+
+              {/* Set background and text colors manually */}
+              <MenuList
+                maxW="300px"
+                bg={useColorModeValue('white', 'gray.800')}
+                color={useColorModeValue('black', 'white')}
+                boxShadow="md"
+              >
                 {notifications.length === 0 ? (
                   <Text px={4} py={2}>No new notifications</Text>
                 ) : (
@@ -246,7 +253,12 @@ export default function DashboardLayout() {
                     </MenuItem>
                   ))
                 )}
-                <MenuItem onClick={() => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))}>
+
+                <MenuItem
+                  onClick={() =>
+                    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+                  }
+                >
                   Mark all as read
                 </MenuItem>
               </MenuList>
