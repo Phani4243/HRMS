@@ -64,6 +64,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Leaves', icon: FiUser, path: '/leaves' },
   { name: 'Support', icon: FiHelpCircle, path: '/support' },
   { name: 'Settings', icon: FiSettings, path: '/settings' },
+
 ];
 
 const SidebarContent = ({ onClose, display }: SidebarProps) => {
