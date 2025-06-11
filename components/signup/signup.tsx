@@ -1,11 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import NextLink from "next/link";
-import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   Button,
-  Checkbox,
   Container,
   Divider,
   Heading,
@@ -15,28 +13,28 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { Logo } from "./Logo";
-import { useSignIn } from "./hook";
-import { PasswordField } from "./PasswordField";
-import { OAuthButtonGroup } from "./OAuthButtonGroup";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import * as yup from "yup";
+import { PasswordField } from "../login/PasswordField";
 import { InputControl } from "components/atoms/TextInput";
 import { DarkModeSwitch } from "components/DarkModeSwitch";
-import { useRouter } from "next/router";
-import { authService } from "./../../lib/services/api";
+import { Logo } from "../login/Logo";
+import { authService } from "../../lib/services/api";
 
-
-interface LoginData {
+interface SignupData {
   email: string;
+  username: string;
   password: string;
 }
 
-interface ApiError {
-  message: string;
-  detail?: string;
-}
+const schema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Email is required"),
+  username: yup.string().min(3).required("Username is required"),
+  password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+});
 
-const Login = () => {
-  const { schema, submit } = useSignIn();
+const Signup = () => {
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
@@ -46,44 +44,42 @@ const Login = () => {
     control,
     setValue,
     formState: { errors },
-  } = useForm<LoginData>({
+  } = useForm<SignupData>({
     resolver: yupResolver(schema),
     defaultValues: {
       email: "",
+      username: "",
       password: "",
-    }
+    },
   });
 
   useEffect(() => {
     setValue("email", "");
+    setValue("username", "");
     setValue("password", "");
   }, [setValue]);
 
-  const onSubmit = async (data: LoginData) => {
+  const onSubmit = async (data: SignupData) => {
     setLoading(true);
     try {
-      const user = await authService.login({ 
-        email: data.email,
-        password: data.password,
-      });
-
-      localStorage.setItem('user', JSON.stringify(user));
+      const user = await authService.signup(data);  
+      localStorage.setItem("user", JSON.stringify(user));
 
       toast({
-        title: "Login successful",
+        title: "Signup successful",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
 
-      submit(data, router);
-      router.push('/Home');
+      router.push("/login");
     } catch (error) {
-      const errorMessage = getErrorMessage(error);
-      
+      const message =
+        (error as any)?.response?.data?.detail ||
+        "Signup failed. Please try again.";
       toast({
-        title: "Login failed",
-        description: errorMessage,
+        title: "Signup failed",
+        description: message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -93,34 +89,19 @@ const Login = () => {
     }
   };
 
-  const getErrorMessage = (error: unknown): string => {
-    if (error instanceof Error) {
-      return error.message;
-    }
-    if (typeof error === 'object' && error !== null) {
-      const apiError = error as ApiError;
-      return apiError.detail || apiError.message || 'An error occurred';
-    }
-    return 'An unexpected error occurred';
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h3>Hi</h3>
-      <input type="text" name="fake-email" style={{ display: "none" }} />
-      <input type="password" name="fake-password" style={{ display: "none" }} />
-
       <Container maxW="lg" py={{ base: "12", md: "24" }} px={{ base: "0", sm: "8" }}>
         <DarkModeSwitch sx={{ position: "fixed", top: "1rem", right: "1rem" }} />
         <Stack spacing="8">
           <Stack spacing="6">
             <Logo />
             <Stack spacing={{ base: "2", md: "3" }} textAlign="center">
-              <Heading size={{ base: "xs", md: "sm" }}>Log in to your account</Heading>
+              <Heading size={{ base: "xs", md: "sm" }}>Create an account</Heading>
               <Text color="fg.muted">
-                Don&apos;t have an account?{" "}
-                <Link as={NextLink} href="/signup" color="blue.500">
-                  Sign up
+                Already have an account?{" "}
+                <Link as={NextLink} href="/login" color="blue.500">
+                  Log in
                 </Link>
               </Text>
             </Stack>
@@ -139,10 +120,14 @@ const Login = () => {
                   name="email"
                   control={control}
                   errors={errors}
-                  inputProps={{
-                    autoComplete: "new-email",
-                    placeholder: "Enter your email",
-                  }}
+                  inputProps={{ autoComplete: "email", placeholder: "Enter your email" }}
+                />
+                <InputControl
+                  label="Username"
+                  name="username"
+                  control={control}
+                  errors={errors}
+                  inputProps={{ autoComplete: "username", placeholder: "Choose a username" }}
                 />
                 <Controller
                   name="password"
@@ -154,34 +139,20 @@ const Login = () => {
                       isInvalid={!!errors.password}
                       errorMessage={errors.password?.message}
                       autoComplete="new-password"
-                      placeholder="Enter your password"
+                      placeholder="Create a password"
                     />
                   )}
                 />
               </Stack>
-              <HStack justify="space-between">
-                <Checkbox defaultChecked>Remember me</Checkbox>
-                <Link as={NextLink} fontWeight="semibold" href="/forgot-password">
-                  Forgot password?
-                </Link>
-              </HStack>
               <Stack spacing="6">
                 <Button
                   type="submit"
                   colorScheme="blue"
                   isLoading={loading}
-                  loadingText="Signing in..."
+                  loadingText="Signing up..."
                 >
-                  Sign in
+                  Sign up
                 </Button>
-                <HStack>
-                  <Divider />
-                  <Text textStyle="sm" whiteSpace="nowrap" color="fg.muted">
-                    or continue with
-                  </Text>
-                  <Divider />
-                </HStack>
-                <OAuthButtonGroup />
               </Stack>
             </Stack>
           </Box>
@@ -191,4 +162,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
