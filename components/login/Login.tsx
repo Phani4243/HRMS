@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import NextLink from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -13,7 +13,9 @@ import {
   Link,
   Stack,
   Text,
+
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { Logo } from "./Logo";
 import { useSignIn } from "./hook";
@@ -23,21 +25,41 @@ import { InputControl } from "components/atoms/TextInput";
 import { DarkModeSwitch } from "components/DarkModeSwitch";
 import { useRouter } from "next/router";
 
+import { authService } from "./../../lib/services/api";
+
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+interface ApiError {
+  message: string;
+  detail?: string;
+}
+
+
 const Login = () => {
   const { schema, submit } = useSignIn();
   const router = useRouter();
+
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+
 
   const {
     handleSubmit,
     control,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<LoginData>({
     resolver: yupResolver(schema),
     defaultValues: {
       email: "",
       password: "",
-    },
+
+    }
+
   });
 
   useEffect(() => {
@@ -45,36 +67,81 @@ const Login = () => {
     setValue("password", "");
   }, [setValue]);
 
-  const onSubmit = (data: any) => {
-    submit(data, router);
-  };
-
   const cardBg = useColorModeValue("white", "gray.800");
   const cardShadow = useColorModeValue(
     "0 8px 30px rgba(0, 0, 0, 0.12)",      // light mode shadow
     "0 10px 40px rgba(0, 0, 0, 0.5)"       // dark mode shadow
   );
-  
-  const textMuted = useColorModeValue("gray.600", "gray.400");
+
+
+  const onSubmit = async (data: LoginData) => {
+    setLoading(true);
+    try {
+      const user = await authService.login({ 
+        email: data.email,
+        password: data.password,
+      });
+
+      localStorage.setItem('user', JSON.stringify(user));
+
+      toast({
+        title: "Login successful",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      submit(data, router);
+      router.push('/Home');
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      
+      toast({
+        title: "Login failed",
+        description: errorMessage,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === 'object' && error !== null) {
+      const apiError = error as ApiError;
+      return apiError.detail || apiError.message || 'An error occurred';
+    }
+    return 'An unexpected error occurred';
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <h3>Hi</h3>
+
       <input type="text" name="fake-email" style={{ display: "none" }} />
       <input type="password" name="fake-password" style={{ display: "none" }} />
 
       <Container maxW="lg" py={{ base: 12, md: 24 }} px={{ base: 4, sm: 8 }}>
         <DarkModeSwitch sx={{ position: "fixed", top: "1rem", right: "1rem" }} />
 
-        <Stack spacing={10} align="center">
-          <Logo />
-          <Stack spacing={1} textAlign="center">
-            <Heading size="lg">Welcome Back</Heading>
-            <Text fontSize="sm" color={textMuted}>
-              Don’t have an account?{" "}
-              <Link as={NextLink} href="#" color="teal.500" fontWeight="medium">
-                Sign up
-              </Link>
-            </Text>
+        <Stack spacing="8">
+          <Stack spacing="6">
+            <Logo />
+            <Stack spacing={{ base: "2", md: "3" }} textAlign="center">
+              <Heading size={{ base: "xs", md: "sm" }}>Log in to your account</Heading>
+              <Text color="fg.muted">
+                Don&apos;t have an account?{" "}
+                <Link as={NextLink} href="/signup" color="blue.500">
+                  Sign up
+                </Link>
+              </Text>
+            </Stack>
+
           </Stack>
 
           <Box
@@ -85,27 +152,35 @@ const Login = () => {
             boxShadow={cardShadow}
             borderRadius="xl"
           >
-            <Stack spacing={6}>
-              <InputControl
-                label="Email"
-                name="email"
-                control={control}
-                errors={errors}
-                inputProps={{ autoComplete: "new-email" }}
-              />
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <PasswordField
-                    {...field}
-                    value={field.value || ""}
-                    isInvalid={!!errors.password}
-                    errorMessage={errors.password?.message}
-                    autoComplete="new-password"
-                  />
-                )}
-              />
+
+            <Stack spacing="6">
+              <Stack spacing="5">
+                <InputControl
+                  label="Email"
+                  name="email"
+                  control={control}
+                  errors={errors}
+                  inputProps={{
+                    autoComplete: "new-email",
+                    placeholder: "Enter your email",
+                  }}
+                />
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <PasswordField
+                      {...field}
+                      value={field.value || ""}
+                      isInvalid={!!errors.password}
+                      errorMessage={errors.password?.message}
+                      autoComplete="new-password"
+                      placeholder="Enter your password"
+                    />
+                  )}
+                />
+              </Stack>
+
               <HStack justify="space-between">
                 <Checkbox defaultChecked>Remember me</Checkbox>
                 <Link
@@ -118,22 +193,26 @@ const Login = () => {
                   Forgot password?
                 </Link>
               </HStack>
-              <Button
-                type="submit"
-                colorScheme="teal"
-                size="lg"
-                fontWeight="semibold"
-              >
-                Sign in
-              </Button>
-              <HStack align="center" width="100%" spacing={4}>
-                <Divider flex="1" borderColor="gray.300" />
-                <Text fontSize="sm" whiteSpace="nowrap" color="gray.500">
-                  or continue with
-                </Text>
-                <Divider flex="1" borderColor="gray.300" />
-              </HStack>
-              <OAuthButtonGroup />
+
+              <Stack spacing="6">
+                <Button
+                  type="submit"
+                  colorScheme="blue"
+                  isLoading={loading}
+                  loadingText="Signing in..."
+                >
+                  Sign in
+                </Button>
+                <HStack>
+                  <Divider />
+                  <Text textStyle="sm" whiteSpace="nowrap" color="fg.muted">
+                    or continue with
+                  </Text>
+                  <Divider />
+                </HStack>
+                <OAuthButtonGroup />
+              </Stack>
+
             </Stack>
           </Box>
         </Stack>
