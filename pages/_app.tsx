@@ -6,6 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import theme from "../lib/theme";
 import { AppProps } from "next/app";
 import store from "../store";
+import { Chat } from "components/Chat/Chat";
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -13,6 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
+        <Chat />
       </ChakraProvider>
     </Provider>
   );
