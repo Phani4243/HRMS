@@ -82,5 +82,5 @@ export const timeSheetData = [
     projectSubTask: "Fix Checkout Process",
     project: "Walmart",
   },
-  
+
 ];
