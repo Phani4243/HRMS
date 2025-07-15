@@ -1,0 +1,9 @@
+backend api for login and signup
+basic chatbot 
+install
+1)pip install uvicorn
+2)uvicorn main:app --reload
+
+if it dosent run please use
+
+python -m uvicorn main:app --reload
