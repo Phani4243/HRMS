@@ -57,9 +57,7 @@ const Login = () => {
     defaultValues: {
       email: "",
       password: "",
-
     }
-
   });
 
   useEffect(() => {
@@ -72,7 +70,6 @@ const Login = () => {
     "0 8px 30px rgba(0, 0, 0, 0.12)",      // light mode shadow
     "0 10px 40px rgba(0, 0, 0, 0.5)"       // dark mode shadow
   );
-
 
   const onSubmit = async (data: LoginData) => {
     setLoading(true);
@@ -95,6 +92,7 @@ const Login = () => {
       router.push('/Home');
     } catch (error) {
       const errorMessage = getErrorMessage(error);
+      
       
       toast({
         title: "Login failed",
@@ -121,8 +119,7 @@ const Login = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h3>Hi</h3>
-
+    
       <input type="text" name="fake-email" style={{ display: "none" }} />
       <input type="password" name="fake-password" style={{ display: "none" }} />
 
